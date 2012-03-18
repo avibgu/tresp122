@@ -59,8 +59,7 @@ public class AviBatelSimpleRobot extends Robot {
 
 	@Override
 	public void onBulletHit(BulletHitEvent event) {
-		// TODO Auto-generated method stub
-		super.onBulletHit(event);
+		back(150);
 	}
 	
 	@Override
@@ -85,7 +84,12 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
-		fire(1);
+		
+		coliiding = true;
+		
+		back(100);
+		
+		coliiding = false;
 	}
 	
 	@Override
