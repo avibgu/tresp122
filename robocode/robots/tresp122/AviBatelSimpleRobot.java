@@ -30,8 +30,8 @@ public class AviBatelSimpleRobot extends Robot {
 			
 			if (!fighting && !coliiding){
 				
-				ahead(100);
 				turnLeft(360);
+				ahead(100);
 			}
 		}
 	}
@@ -42,30 +42,14 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-
+		
 		fighting = true;
-
-		double delta = event.getBearing();
 		
-		if (delta < 0)
-			turnLeft(delta);
-		
-		else turnRight(delta);
+		turnRight(event.getBearing());
 		
 		fire(3);
 		
 		fighting = false;
-	}
-
-	@Override
-	public void onBulletHit(BulletHitEvent event) {
-		back(150);
-	}
-	
-	@Override
-	public void onBulletMissed(BulletMissedEvent event) {
-		// TODO Auto-generated method stub
-		super.onBulletMissed(event);
 	}
 	
 	
@@ -74,8 +58,7 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onHitByBullet(HitByBulletEvent event) {
-		// TODO Auto-generated method stub
-		super.onHitByBullet(event);
+		runAway();
 	}
 	
 	
@@ -84,20 +67,16 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
-		
-		coliiding = true;
-		
-		back(100);
-		
-		coliiding = false;
+		if (!fighting) runAway();
 	}
 	
-	@Override
-	public void onHitWall(HitWallEvent event) {
-
+	
+	public void runAway() {
+		
 		coliiding = true;
 		
-		turnLeft(90);
+		turnLeft(60);
+		back(250);
 		
 		coliiding = false;
 	}
