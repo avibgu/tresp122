@@ -1,6 +1,8 @@
 package tresp122;
 
 import java.awt.Color;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
@@ -12,14 +14,11 @@ import robocode.ScannedRobotEvent;
 //			 http://robowiki.net/wiki/Robocode/Running_from_Eclipse
 
 public class AviBatelSimpleRobot extends Robot {
+
+	private Lock lock;
 	
-	private boolean fighting;
-	private boolean coliding;
-
-	public AviBatelSimpleRobot() {
-
-		fighting = false;
-		coliding = false;
+	public AviBatelSimpleRobot() {		
+		lock = new ReentrantLock(true);
 	}
 	
 	@Override
@@ -31,11 +30,18 @@ public class AviBatelSimpleRobot extends Robot {
 		setAdjustRadarForRobotTurn(true);
 		
 		while(true){
-			
-			if (!fighting && !coliding){
+
+			if (lock.tryLock()) {
 				
-				turnRadarLeft(360);
-				ahead(100);
+				try {
+
+					turnRadarLeft(360);
+					ahead(100);
+				}
+				finally {
+
+					lock.unlock();
+				}
 			}
 		}
 	}
@@ -47,15 +53,15 @@ public class AviBatelSimpleRobot extends Robot {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
 		
-		if (getGunHeat() == 0 && !coliding) {
+		if (getGunHeat() == 0) {
 			
-			fighting = true;
+			lock.lock();
 			
 			turnRight(event.getBearing());
 			
 			fire(Rules.MAX_BULLET_POWER);
 
-			fighting = false;
+			lock.unlock();
 		}
 	}
 	
@@ -66,18 +72,21 @@ public class AviBatelSimpleRobot extends Robot {
 	@Override
 	public void onHitByBullet(HitByBulletEvent event) {
 
-		if (!fighting && !coliding){
+		if (lock.tryLock()) {
 			
-			coliding = true;
-			
-			if (Math.random() > 0.5)
-				turnRight(event.getBearing() + 45);
-			else
-				turnRight(event.getBearing() - 45);
-			
-			back(200);
-			
-			coliding = false;
+			try {
+
+				if (Math.random() > 0.5)
+					turnRight(event.getBearing() + 45);
+				else
+					turnRight(event.getBearing() - 45);
+				
+				back(200);
+			}
+			finally {
+
+				lock.unlock();
+			}
 		}
 	}
 	
@@ -88,14 +97,17 @@ public class AviBatelSimpleRobot extends Robot {
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
 
-		if (!fighting && !coliding){
+		if (lock.tryLock()) {
 			
-			coliding = true;
-			
-			turnRight(event.getBearing());
-			back(300);
-			
-			coliding = false;
+			try {
+
+				turnRight(event.getBearing());
+				back(300);
+			}
+			finally {
+
+				lock.unlock();
+			}
 		}
 	}
 }
