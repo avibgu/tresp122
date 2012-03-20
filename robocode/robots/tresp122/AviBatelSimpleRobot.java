@@ -4,11 +4,9 @@ import java.awt.Color;
 
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
-import robocode.HitWallEvent;
 import robocode.Robot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
-import robocode.util.Utils;
 
 //API help : http://robocode.sourceforge.net/docs/robocode
 //			 http://robowiki.net/wiki/Robocode/Running_from_Eclipse
@@ -27,7 +25,8 @@ public class AviBatelSimpleRobot extends Robot {
 	@Override
 	public void run() {
 
-		setColors(Color.red, Color.black, Color.green); // body,gun,radar
+		// body, gun, radar
+		setColors(Color.red, Color.black, Color.green);
 		
 		setAdjustRadarForRobotTurn(true);
 		
