@@ -2,23 +2,26 @@ package tresp122;
 
 import java.awt.Color;
 
-import robocode.BulletHitEvent;
-import robocode.BulletMissedEvent;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
 import robocode.HitWallEvent;
 import robocode.Robot;
+import robocode.Rules;
 import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
+
+//API help : http://robocode.sourceforge.net/docs/robocode
+//			 http://robowiki.net/wiki/Robocode/Running_from_Eclipse
 
 public class AviBatelSimpleRobot extends Robot {
 	
 	private boolean fighting;
-	private boolean coliiding;
+	private boolean coliding;
 
 	public AviBatelSimpleRobot() {
 
 		fighting = false;
-		coliiding = false;
+		coliding = false;
 	}
 	
 	@Override
@@ -26,11 +29,13 @@ public class AviBatelSimpleRobot extends Robot {
 
 		setColors(Color.red, Color.black, Color.green); // body,gun,radar
 		
+		setAdjustRadarForRobotTurn(true);
+		
 		while(true){
 			
-			if (!fighting && !coliiding){
+			if (!fighting && !coliding){
 				
-				turnLeft(360);
+				turnRadarLeft(360);
 				ahead(100);
 			}
 		}
@@ -43,13 +48,16 @@ public class AviBatelSimpleRobot extends Robot {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
 		
-		fighting = true;
-		
-		turnRight(event.getBearing());
-		
-		fire(3);
-		
-		fighting = false;
+		if (getGunHeat() == 0 && !coliding) {
+			
+			fighting = true;
+			
+			turnRight(event.getBearing());
+			
+			fire(Rules.MAX_BULLET_POWER);
+
+			fighting = false;
+		}
 	}
 	
 	
@@ -58,7 +66,20 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onHitByBullet(HitByBulletEvent event) {
-		runAway();
+
+		if (!fighting && !coliding){
+			
+			coliding = true;
+			
+			if (Math.random() > 0.5)
+				turnRight(event.getBearing() + 45);
+			else
+				turnRight(event.getBearing() - 45);
+			
+			back(200);
+			
+			coliding = false;
+		}
 	}
 	
 	
@@ -67,17 +88,15 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onHitRobot(HitRobotEvent event) {
-		if (!fighting) runAway();
-	}
-	
-	
-	public void runAway() {
-		
-		coliiding = true;
-		
-		turnLeft(60);
-		back(250);
-		
-		coliiding = false;
+
+		if (!fighting && !coliding){
+			
+			coliding = true;
+			
+			turnRight(event.getBearing());
+			back(300);
+			
+			coliding = false;
+		}
 	}
 }
