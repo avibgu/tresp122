@@ -1,13 +1,15 @@
 package tresp122;
 
-import robocode.Robot;
+import robocode.AdvancedRobot;
+import robocode.Condition;
+import robocode.TurnCompleteCondition;
 
 public class MoveBThread implements BThread {
 
-	protected Robot mRobot;
+	protected AdvancedRobot mRobot;
 	protected boolean mDontStop;
 	
-	public MoveBThread(Robot pRobot) {
+	public MoveBThread(AdvancedRobot pRobot) {
 
 		mRobot = pRobot;
 		mDontStop = true;
@@ -15,11 +17,18 @@ public class MoveBThread implements BThread {
 	
 	@Override
 	public void run() {
-
+		
 		while(mDontStop) {
 			
-			mRobot.ahead(100);
+			waitFor(new TurnCompleteCondition(mRobot));
+			
+			mRobot.setTurnRadarRight(360);
+			mRobot.setAhead(100);
 		}
+	}
+
+	private void waitFor(Condition condition) {
+		while(!condition.test()) continue;
 	}
 
 	public void stop() {

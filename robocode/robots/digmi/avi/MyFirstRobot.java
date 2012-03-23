@@ -10,7 +10,7 @@ public class MyFirstRobot extends AdvancedRobot {
 	// be able to modify its value, so a simple Boolean object will not do.
 	// It will also be used to make our threads wait until the next round. For
 	// this, it must inherit from Object to get at its notifyAll() method.
-	final boolean[] token = { true };
+	Boolean token = true;
 
 	// Number of threads we have spawned.
 	int threadCount = 0;
@@ -38,7 +38,7 @@ public class MyFirstRobot extends AdvancedRobot {
 					public void run() {
 
 						synchronized (token) {
-							while (token[0] == true && runCount < 100) {
+							while (token == true && runCount < 100) {
 								System.out
 										.printf("\tHi from Thread#%d (current time: %d). Repeat count: %d\n",
 												spawnTime, getTime(),
@@ -79,7 +79,7 @@ public class MyFirstRobot extends AdvancedRobot {
 
 		// Politely tell our threads to stop because the round is over
 		synchronized (token) {
-			token[0] = false;
+			token = false;
 		}
 	}
 
@@ -88,7 +88,7 @@ public class MyFirstRobot extends AdvancedRobot {
 
 		// Politely tell our threads to stop because the round is over
 		synchronized (token) {
-			token[0] = false;
+			token = false;
 		}
 	}
 
@@ -100,7 +100,7 @@ public class MyFirstRobot extends AdvancedRobot {
 		// so beware of duplication with onDeath/onWin (if that is important to
 		// you).
 		synchronized (token) {
-			token[0] = false;
+			token = false;
 		}
 	}
 }

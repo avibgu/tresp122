@@ -1,0 +1,7 @@
+#Robocode robot team
+#Sun Mar 17 13:29:44 EST 2002
+team.members=dwteam.FlockSweepLeader,dwteam.DuckCookerDroid,dwteam.DuckCookerDroid,dwteam.DuckCookerDroid,dwteam.DuckCookerDroid
+team.author.name=
+robocode.version=0.99.2
+team.webpage=
+team.description=IBM developerWorks Sample Team...
