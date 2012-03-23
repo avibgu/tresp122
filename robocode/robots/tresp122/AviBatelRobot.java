@@ -75,7 +75,7 @@ public class AviBatelRobot extends AdvancedRobot {
 		synchronized (mFire) {
 			
 			for (BThreadID id : mFire.keySet())
-				super.turnRight(mFire.get(id));
+				super.fire(mFire.get(id));
 			
 			mFire = new HashMap<BThreadID, Double>();
 		}
