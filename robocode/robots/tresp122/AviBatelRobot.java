@@ -3,6 +3,10 @@ package tresp122;
 import robocode.*;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 // API help : http://robocode.sourceforge.net/docs/robocode/robocode/Robot.html
 
@@ -11,64 +15,82 @@ import java.awt.Color;
  */
 public class AviBatelRobot extends AdvancedRobot {
 
+	protected Map<BThreadID,Double> mAhead;
+	protected Map<BThreadID,Double> mTurnRight;
+	
 	protected MoveBThread mMoveBThread;
-
+	
+	protected Set<BThread> mOnScannedRobot;
+	
 	public AviBatelRobot() {
 
+		mAhead = new HashMap<BThreadID, Double>();
+		mTurnRight = new HashMap<BThreadID, Double>();
+		
 		mMoveBThread = new MoveBThread(this);
-
-		// add Threads to the mailing list of each event
+		
+		mOnScannedRobot = new HashSet<BThread>();
+		
+		mOnScannedRobot.add(mMoveBThread);
 	}
 
 	public void run() {
 
 		setColors(Color.red, Color.black, Color.green); // body,gun,radar
-
-	//	setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 		
 		new Thread(mMoveBThread).start();
-	}
-
-//	public void onScannedRobot(ScannedRobotEvent e) {
-//		setFire(1);
-//	}
-//
-//	public void onHitByBullet(HitByBulletEvent e) {
-//		setTurnLeft(90);
-//	}
-//
-//	public void onHitWall(HitWallEvent e) {
-//		setTurnLeft(90);
-//	}
-	
-	
-	// basic moves: (should be removed..)
-	
-	
-	@Override
-	public void ahead(double distance) {
-		synchronized (this) {
-			super.ahead(distance);
-		}
-	}
-	
-	@Override
-	public void turnLeft(double degrees) {
-		synchronized (this) {
-			super.turnLeft(degrees);
+		
+		while(true){
+			
+			decideWhatToDo();
 		}
 	}
 
+	private void decideWhatToDo() {
+		synchronized (mAhead) {
+			
+			for (BThreadID id : mAhead.keySet())
+				super.ahead(mAhead.get(id));
+			
+			mAhead = new HashMap<BThreadID, Double>();
+		}
+		synchronized (mTurnRight) {
+			
+			for (BThreadID id : mTurnRight.keySet())
+				super.turnRight(mTurnRight.get(id));
+			
+			mTurnRight = new HashMap<BThreadID, Double>();
+		}
+	}
+
+	
+	// Events:
+	
+	
 	@Override
-	public void fire(double power) {
-		synchronized (this) {
-			super.fire(power);
+	public void onScannedRobot(ScannedRobotEvent event) {
+		for (BThread bThread : mOnScannedRobot)
+			bThread.onScannedRobot(event);
+	}
+	
+	
+	// Basic Moves:
+	
+
+	public void ahead(BThreadID id, double distance) {
+		synchronized (mAhead) {
+			mAhead.put(id, distance);
+		}
+	}
+
+	public void turnRight(BThreadID id, double degrees) {
+		synchronized (mTurnRight) {
+			mTurnRight.put(id, degrees);
 		}
 	}
 	
 	
-	
-	// Handle multi-threading:
+	// Handle Threads:
 	
 	
 	@Override
