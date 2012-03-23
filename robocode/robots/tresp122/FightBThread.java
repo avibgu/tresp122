@@ -1,5 +1,6 @@
 package tresp122;
 
+import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 public class FightBThread implements BThread {
@@ -29,7 +30,13 @@ public class FightBThread implements BThread {
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		mRobot.fire(getID(),1);
+		
+		if (mRobot.getGunHeat() == 0) {
+			
+			mRobot.turnRight(getID(), event.getBearing());
+			
+			mRobot.fire(getID(), Rules.MAX_BULLET_POWER);
+		}
 	}
 
 }

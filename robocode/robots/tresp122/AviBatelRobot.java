@@ -65,13 +65,19 @@ public class AviBatelRobot extends AdvancedRobot {
 			
 			mAhead = new HashMap<BThreadID, Double>();
 		}
+		
 		synchronized (mTurnRight) {
 			
-			for (BThreadID id : mTurnRight.keySet())
-				super.turnRight(mTurnRight.get(id));
+			if (mTurnRight.containsKey(BThreadID.FIGHT))
+				super.turnRight(mTurnRight.get(BThreadID.FIGHT));
+			
+			else
+				for (BThreadID id : mTurnRight.keySet())
+					super.turnRight(mTurnRight.get(id));
 			
 			mTurnRight = new HashMap<BThreadID, Double>();
 		}
+		
 		synchronized (mFire) {
 			
 			for (BThreadID id : mFire.keySet())
