@@ -17,8 +17,10 @@ public class AviBatelRobot extends AdvancedRobot {
 
 	protected Map<BThreadID,Double> mAhead;
 	protected Map<BThreadID,Double> mTurnRight;
+	protected Map<BThreadID,Double> mFire;
 	
 	protected MoveBThread mMoveBThread;
+	protected FightBThread mFightBThread;
 	
 	protected Set<BThread> mOnScannedRobot;
 	
@@ -26,27 +28,36 @@ public class AviBatelRobot extends AdvancedRobot {
 
 		mAhead = new HashMap<BThreadID, Double>();
 		mTurnRight = new HashMap<BThreadID, Double>();
+		mFire = new HashMap<BThreadID, Double>();
 		
 		mMoveBThread = new MoveBThread(this);
+		mFightBThread = new FightBThread(this);
 		
 		mOnScannedRobot = new HashSet<BThread>();
 		
 		mOnScannedRobot.add(mMoveBThread);
+		mOnScannedRobot.add(mFightBThread);
 	}
 
 	public void run() {
 
 		setColors(Color.red, Color.black, Color.green); // body,gun,radar
 		
+		setAdjustRadarForRobotTurn(true);
+		
+		setTurnRadarLeft(Double.MAX_VALUE);
+		
 		new Thread(mMoveBThread).start();
 		
 		while(true){
 			
 			decideWhatToDo();
+			execute();
 		}
 	}
 
 	private void decideWhatToDo() {
+		
 		synchronized (mAhead) {
 			
 			for (BThreadID id : mAhead.keySet())
@@ -60,6 +71,13 @@ public class AviBatelRobot extends AdvancedRobot {
 				super.turnRight(mTurnRight.get(id));
 			
 			mTurnRight = new HashMap<BThreadID, Double>();
+		}
+		synchronized (mFire) {
+			
+			for (BThreadID id : mFire.keySet())
+				super.turnRight(mFire.get(id));
+			
+			mFire = new HashMap<BThreadID, Double>();
 		}
 	}
 
@@ -89,6 +107,11 @@ public class AviBatelRobot extends AdvancedRobot {
 		}
 	}
 	
+	public void fire(BThreadID id, double power) {	
+		synchronized (mFire) {
+			mFire.put(id, power);
+		}
+	}
 	
 	// Handle Threads:
 	
