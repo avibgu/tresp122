@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
@@ -28,11 +29,15 @@ public class AviBatelRobot extends AdvancedRobot {
 	protected Set<BThread> mOnScannedRobot;
 	protected Set<BThread> mOnHitWall;
 	
-	protected ScheduledExecutorService mExecutor;
+//	TODO
+//	protected ScheduledExecutorService mExecutor;
+	protected ExecutorService mExecutor;
 	
 	public AviBatelRobot() {
 		
-		mExecutor = Executors.newSingleThreadScheduledExecutor();
+//		TODO
+//		mExecutor = Executors.newSingleThreadScheduledExecutor();
+		mExecutor = Executors.newFixedThreadPool(5);
 		
 		mLock = new ReentrantLock(true);
 		
@@ -60,12 +65,19 @@ public class AviBatelRobot extends AdvancedRobot {
 		
 		setTurnRadarLeft(Double.MAX_VALUE);
 		
-		new Thread(mMoveBThread).start();
-		new Thread(mFightBThread).start();
+//		TODO
+//		new Thread(mMoveBThread).start();
+//		new Thread(mFightBThread).start();
+		
+		mExecutor.execute(mMoveBThread);
+		mExecutor.execute(mFightBThread);
 		
 		while(true){
 			
-			decideWhatToDo();
+			try{
+				decideWhatToDo();
+			}
+			catch (Exception e) {}
 		}
 	}
 
@@ -188,7 +200,7 @@ public class AviBatelRobot extends AdvancedRobot {
 		mMoveBThread.stop();
 		mFightBThread.stop();
 		
-		mExecutor.shutdown();
+		mExecutor.shutdownNow();
 
 		while(!mExecutor.isShutdown()) continue;
 		
