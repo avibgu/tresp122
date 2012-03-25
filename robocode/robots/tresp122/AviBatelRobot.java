@@ -80,8 +80,8 @@ public class AviBatelRobot extends AdvancedRobot {
 			switch (event.getType()) {
 				
 				case FIRE:
-					setFire(event.getValue());
-//					fire(event.getValue());
+//					setFire(event.getValue());
+					fire(event.getValue());
 					break;
 					
 				case AHEAD:
@@ -184,8 +184,15 @@ public class AviBatelRobot extends AdvancedRobot {
 	}
 
 	private void stopAllThreads() {
+		
 		mLock.unlock();
+		
+		mExecutor.shutdownNow();
+
+		while(!mExecutor.isShutdown()) continue;
+
 		mMoveBThread.stop();
 		mFightBThread.stop();
+		
 	}
 }

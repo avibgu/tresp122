@@ -31,15 +31,15 @@ public class MoveBThread extends BThread {
 					
 					double degree = mHitWalls.poll().getBearing() - 100;
 					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, degree));
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 5, degree));
 				}
+				
+				waitUntilTheRobotIsNotMoving();
 			}
 			finally {
 				mLock.unlock();
 			}
 		}
-
-		waitUntilTheRobotIsNotMoving();
 	}
 
 	protected void waitUntilTheRobotIsNotMoving() {
