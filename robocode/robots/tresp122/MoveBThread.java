@@ -32,7 +32,7 @@ public class MoveBThread extends BThread {
 					double degree = mHitWalls.poll().getBearing() - 100;
 					
 					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 5, degree));
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 150));
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 5, 150));
 				}
 			}
 			finally {
