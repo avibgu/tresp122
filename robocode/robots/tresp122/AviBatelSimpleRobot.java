@@ -29,6 +29,7 @@ public class AviBatelSimpleRobot extends Robot {
 		setColors(Color.red, Color.black, Color.green);
 		
 		setAdjustRadarForRobotTurn(true);
+		setAdjustGunForRobotTurn(true);
 		
 		while(true){
 
@@ -86,7 +87,9 @@ public class AviBatelSimpleRobot extends Robot {
 			
 			lock.lock();
 			
-			turnRight(event.getBearing());
+			double degree = getHeading() - getGunHeading() + event.getBearing();
+			
+			turnGunRight(degree);
 			
 			fire(Rules.MAX_BULLET_POWER);
 

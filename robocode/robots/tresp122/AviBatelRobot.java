@@ -55,7 +55,6 @@ public class AviBatelRobot extends AdvancedRobot {
 		while(true){
 			
 			decideWhatToDo();
-			execute();
 		}
 	}
 
@@ -69,6 +68,8 @@ public class AviBatelRobot extends AdvancedRobot {
 			mAhead.clear();
 		}
 		
+		execute();
+		
 		synchronized (mTurnRight) {
 			
 			for (BThreadID id : mTurnRight.keySet())
@@ -76,6 +77,8 @@ public class AviBatelRobot extends AdvancedRobot {
 			
 			mTurnRight.clear();
 		}
+		
+		execute();
 		
 		synchronized (mTurnGunRight) {
 			
@@ -85,6 +88,8 @@ public class AviBatelRobot extends AdvancedRobot {
 			mTurnGunRight.clear();
 		}
 		
+		execute();
+		
 		synchronized (mFire) {
 			
 			for (BThreadID id : mFire.keySet())
@@ -92,6 +97,8 @@ public class AviBatelRobot extends AdvancedRobot {
 			
 			mFire.clear();
 		}
+		
+		execute();
 	}
 
 	
