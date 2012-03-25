@@ -74,43 +74,43 @@ public class AviBatelRobot extends AdvancedRobot {
 					break;
 					
 				case AHEAD:
-//					setAhead(event.getValue());
-					ahead(event.getValue());
+					setAhead(event.getValue());
+//					ahead(event.getValue());
 					break;
 					
 				case BACK:
-//					setBack(event.getValue());
-					back(event.getValue());
+					setBack(event.getValue());
+//					back(event.getValue());
 					break;
 					
 				case TURN_LEFT:
-//					setTurnLeft(event.getValue());
-					turnLeft(event.getValue());
+					setTurnLeft(event.getValue());
+//					turnLeft(event.getValue());
 					break;
 					
 				case TURN_RIGHT:
-//					setTurnRight(event.getValue());
-					turnRight(event.getValue());
+					setTurnRight(event.getValue());
+//					turnRight(event.getValue());
 					break;
 					
 				case TURN_GUN_LEFT:
-//					setTurnGunLeft(event.getValue());
-					turnGunLeft(event.getValue());
+					setTurnGunLeft(event.getValue());
+//					turnGunLeft(event.getValue());
 					break;
 					
 				case TURN_GUN_RIGHT:
-//					setTurnGunRight(event.getValue());
-					turnGunRight(event.getValue());
+					setTurnGunRight(event.getValue());
+//					turnGunRight(event.getValue());
 					break;
 					
 				case TURN_RADAR_LEFT:
-//					setTurnRadarLeft(event.getValue());
-					turnRadarLeft(event.getValue());
+					setTurnRadarLeft(event.getValue());
+//					turnRadarLeft(event.getValue());
 					break;
 					
 				case TURN_RADAR_RIGHT:
-//					setTurnRadarRight(event.getValue());
-					turnRadarRight(event.getValue());
+					setTurnRadarRight(event.getValue());
+//					turnRadarRight(event.getValue());
 					break;
 			}
 
@@ -139,15 +139,11 @@ public class AviBatelRobot extends AdvancedRobot {
 
 	public void addEvent(BThreadID id, BThreadEvent event) {
 
-		mLock.tryLock();
-	          
-			try {
-				mEvents.add(event);
-			}
-			finally {
-				mLock.unlock();
-			}
+		mLock.lock();
 
+		mEvents.add(event);
+
+		mLock.unlock();
 	}
 
 	

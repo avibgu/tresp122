@@ -2,9 +2,33 @@ package tresp122;
 
 import robocode.ScannedRobotEvent;
 
-public interface BThread extends Runnable {
+public abstract class BThread implements Runnable {
 
-	BThreadID getID();
+	protected AviBatelRobot mRobot;
+	protected boolean mDontStop;
+	
+	public BThread(AviBatelRobot pRobot) {
 
-	void onScannedRobot(ScannedRobotEvent event);
+		mRobot = pRobot;
+		mDontStop = true;
+	}
+	
+	@Override
+	public void run() {
+		
+		while(mDontStop){
+			
+			decideWhatToDo();
+		}
+	}
+	
+	public void stop() {
+		mDontStop = false;
+	}
+	
+	public abstract void decideWhatToDo();
+
+	public abstract BThreadID getID();
+
+	public abstract void onScannedRobot(ScannedRobotEvent event);
 }

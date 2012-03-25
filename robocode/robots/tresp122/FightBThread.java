@@ -2,62 +2,51 @@ package tresp122;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
-public class FightBThread implements BThread {
-
-	protected AviBatelRobot mRobot;
-	protected boolean mDontStop;
+public class FightBThread extends BThread {
 	
-	Queue<ScannedRobotEvent> mScannedRobots;
+	protected Lock mLock;
+	
+	protected Queue<ScannedRobotEvent> mScannedRobots;
 	
 	public FightBThread(AviBatelRobot pRobot) {
 
-		mRobot = pRobot;
-		mDontStop = true;
+		super(pRobot);
+		
+		mLock = new ReentrantLock(true);
 		
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
 	}
 
-	@Override
-	public void run() {
-		
-		while(mDontStop){
+	public void decideWhatToDo() {
 
-			synchronized (mScannedRobots) {
-				
-				while(mScannedRobots.isEmpty())
-					try {
-						mScannedRobots.wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
-			
-			decideWhatToDo();
-		}
-	}
+//		 if (mLock.tryLock()) {
+//
+//			 try {
 
-	private void decideWhatToDo() {
-
-		synchronized (mScannedRobots) {
-			
-			while (!mScannedRobots.isEmpty()){
-			
-				ScannedRobotEvent event = mScannedRobots.poll();
-					
-				if (mRobot.getGunHeat() == 0) {
-					
-					double degree = mRobot.getHeading() - mRobot.getGunHeading() + event.getBearing();
-					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_GUN_RIGHT, 11, degree));
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.FIRE, 10, Rules.MAX_BULLET_POWER));
-				}
-			}
-		}
+				 if (!mScannedRobots.isEmpty()){
+	      			
+					 ScannedRobotEvent event = mScannedRobots.poll();
+	  					
+					 if (mRobot.getGunHeat() == 0) {
+	  					
+						 double degree = mRobot.getHeading() - mRobot.getGunHeading() + event.getBearing();
+	  					
+						 mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_GUN_RIGHT, 11, degree));
+						 mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.FIRE, 10, Rules.MAX_BULLET_POWER));
+					 }
+				 }
+//			 }
+//			 finally {
+//				 
+//				 mLock.unlock();
+//			 }
+//		 }
 	}
 
 	@Override
@@ -67,15 +56,21 @@ public class FightBThread implements BThread {
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		synchronized (mScannedRobots) {
-			mScannedRobots.add(event);
-			mScannedRobots.notifyAll();
-		}
-	}
 
+//		 if (mLock.tryLock()) {
+//		
+//			 try{
+				 mScannedRobots.add(event);
+//			 }
+//			 finally{
+//				 mLock.unlock();
+//			 }
+//		 }
+	}
+	
+	@Override
 	public void stop() {
-		mDontStop = false;
-		mScannedRobots.notifyAll();
+//		mLock.unlock();
+		super.stop();
 	}
-
 }

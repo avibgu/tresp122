@@ -1,41 +1,34 @@
 package tresp122;
 
+import robocode.MoveCompleteCondition;
 import robocode.ScannedRobotEvent;
 
-public class MoveBThread implements BThread {
+public class MoveBThread extends BThread {
 
-	protected AviBatelRobot mRobot;
-	protected boolean mDontStop;
-	
 	public MoveBThread(AviBatelRobot pRobot) {
-
-		mRobot = pRobot;
-		mDontStop = true;
+		super(pRobot);
 	}
-	
+
 	@Override
-	public void run() {
+	public void decideWhatToDo() {
+
+		mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 300));
+		mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
 		
-//		while(mDontStop) {
-		
-		for (int i = 0; i < 7; i ++){
-		
-			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 100));
-			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
+		while(!new MoveCompleteCondition(mRobot).test() && mDontStop){
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
-
-	public void stop() {
-		mDontStop = false;
-	}
-
+	
 	@Override
 	public BThreadID getID() {
 		return BThreadID.MOVE;
 	}
 
 	@Override
-	public void onScannedRobot(ScannedRobotEvent event) {
-		// TODO Auto-generated method stub
-	}
+	public void onScannedRobot(ScannedRobotEvent event) {}
 }
