@@ -1,16 +1,30 @@
 package tresp122;
 
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import robocode.HitWallEvent;
 import robocode.ScannedRobotEvent;
 
 public abstract class BThread implements Runnable {
 
+	protected Lock mLock;
 	protected AviBatelRobot mRobot;
 	protected boolean mDontStop;
 	
+	protected Queue<ScannedRobotEvent> mScannedRobots;
+	protected Queue<HitWallEvent> mHitWalls;
+	
 	public BThread(AviBatelRobot pRobot) {
 
+		mLock = new ReentrantLock(true);
 		mRobot = pRobot;
 		mDontStop = true;
+		
+		mScannedRobots = new LinkedList<ScannedRobotEvent>();
+		mHitWalls = new LinkedList<HitWallEvent>();
 	}
 	
 	@Override
@@ -23,6 +37,7 @@ public abstract class BThread implements Runnable {
 	}
 	
 	public void stop() {
+		mLock.unlock();
 		mDontStop = false;
 	}
 	
@@ -31,4 +46,6 @@ public abstract class BThread implements Runnable {
 	public abstract BThreadID getID();
 
 	public abstract void onScannedRobot(ScannedRobotEvent event);
+	
+	public abstract void onHitWall(HitWallEvent event);
 }

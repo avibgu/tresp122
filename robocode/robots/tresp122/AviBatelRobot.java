@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -24,8 +26,13 @@ public class AviBatelRobot extends AdvancedRobot {
 	protected FightBThread mFightBThread;
 	
 	protected Set<BThread> mOnScannedRobot;
+	protected Set<BThread> mOnHitWall;
+	
+	protected ScheduledExecutorService mExecutor;
 	
 	public AviBatelRobot() {
+		
+		mExecutor = Executors.newSingleThreadScheduledExecutor();
 		
 		mLock = new ReentrantLock(true);
 		
@@ -35,9 +42,13 @@ public class AviBatelRobot extends AdvancedRobot {
 		mFightBThread = new FightBThread(this);
 		
 		mOnScannedRobot = new HashSet<BThread>();
+		mOnHitWall = new HashSet<BThread>();
 		
 		mOnScannedRobot.add(mMoveBThread);
+		mOnHitWall.add(mMoveBThread);
+		
 		mOnScannedRobot.add(mFightBThread);
+		mOnHitWall.add(mFightBThread);
 	}
 
 	public void run() {
@@ -129,8 +140,12 @@ public class AviBatelRobot extends AdvancedRobot {
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		for (BThread bThread : mOnScannedRobot)
-			bThread.onScannedRobot(event);
+		mExecutor.execute(new NotifierThread(mOnScannedRobot, event));
+	}
+	
+	@Override
+	public void onHitWall(HitWallEvent event) {
+		mExecutor.execute(new NotifierThread(mOnHitWall, event));
 	}
 	
 	

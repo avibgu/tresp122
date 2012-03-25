@@ -1,33 +1,20 @@
 package tresp122;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
+import robocode.HitWallEvent;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 public class FightBThread extends BThread {
 	
-	protected Lock mLock;
-	
-	protected Queue<ScannedRobotEvent> mScannedRobots;
-	
 	public FightBThread(AviBatelRobot pRobot) {
-
 		super(pRobot);
-		
-		mLock = new ReentrantLock(true);
-		
-		mScannedRobots = new LinkedList<ScannedRobotEvent>();
 	}
 
 	public void decideWhatToDo() {
 
-//		 if (mLock.tryLock()) {
-//
-//			 try {
+		 if (mLock.tryLock()) {
+
+			 try {
 
 				 if (!mScannedRobots.isEmpty()){
 	      			
@@ -41,12 +28,12 @@ public class FightBThread extends BThread {
 						 mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.FIRE, 10, Rules.MAX_BULLET_POWER));
 					 }
 				 }
-//			 }
-//			 finally {
-//				 
-//				 mLock.unlock();
-//			 }
-//		 }
+			 }
+			 finally {
+				 
+				 mLock.unlock();
+			 }
+		 }
 	}
 
 	@Override
@@ -57,20 +44,18 @@ public class FightBThread extends BThread {
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
 
-//		 if (mLock.tryLock()) {
-//		
-//			 try{
-				 mScannedRobots.add(event);
-//			 }
-//			 finally{
-//				 mLock.unlock();
-//			 }
-//		 }
+		mLock.lock();
+		
+		mScannedRobots.add(event);
+		
+		mLock.unlock();
+
 	}
+
+	
+	// ignored events:
+	
 	
 	@Override
-	public void stop() {
-//		mLock.unlock();
-		super.stop();
-	}
+	public void onHitWall(HitWallEvent event) {}
 }
