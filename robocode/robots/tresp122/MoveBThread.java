@@ -16,21 +16,12 @@ public class MoveBThread implements BThread {
 	@Override
 	public void run() {
 		
-		while(mDontStop) {
+//		while(mDontStop) {
 			
+		for (int i = 0; i < 17; i ++){
+		
 			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 100));
 			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
-			
-			waitSomeTime();
-		}
-	}
-
-	protected void waitSomeTime() {
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

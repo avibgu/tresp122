@@ -63,39 +63,39 @@ public class AviBatelRobot extends AdvancedRobot {
 				switch (event.getType()) {
 					
 					case FIRE:
-						fire(event.getValue());
+						setFire(event.getValue());
 						break;
 						
 					case AHEAD:
-						ahead(event.getValue());
+						setAhead(event.getValue());
 						break;
 						
 					case BACK:
-						back(event.getValue());
+						setBack(event.getValue());
 						break;
 						
 					case TURN_LEFT:
-						turnLeft(event.getValue());
+						setTurnLeft(event.getValue());
 						break;
 						
 					case TURN_RIGHT:
-						turnRight(event.getValue());
+						setTurnRight(event.getValue());
 						break;
 						
 					case TURN_GUN_LEFT:
-						turnGunLeft(event.getValue());
+						setTurnGunLeft(event.getValue());
 						break;
 						
 					case TURN_GUN_RIGHT:
-						turnGunRight(event.getValue());
+						setTurnGunRight(event.getValue());
 						break;
 						
 					case TURN_RADAR_LEFT:
-						turnRadarLeft(event.getValue());
+						setTurnRadarLeft(event.getValue());
 						break;
 						
 					case TURN_RADAR_RIGHT:
-						turnRadarRight(event.getValue());
+						setTurnRadarRight(event.getValue());
 						break;
 				}
 			}
