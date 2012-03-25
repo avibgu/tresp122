@@ -53,7 +53,7 @@ public class FightBThread implements BThread {
 					
 					double degree = mRobot.getHeading() - mRobot.getGunHeading() + event.getBearing();
 					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_GUN_RIGHT, 10, degree));
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_GUN_RIGHT, 11, degree));
 					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.FIRE, 10, Rules.MAX_BULLET_POWER));
 				}
 			}

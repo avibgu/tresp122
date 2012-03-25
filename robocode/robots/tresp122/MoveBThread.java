@@ -17,8 +17,8 @@ public class MoveBThread implements BThread {
 	public void run() {
 		
 //		while(mDontStop) {
-			
-		for (int i = 0; i < 17; i ++){
+		
+		for (int i = 0; i < 7; i ++){
 		
 			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 100));
 			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
