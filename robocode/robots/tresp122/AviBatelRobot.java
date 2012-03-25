@@ -74,10 +74,7 @@ public class AviBatelRobot extends AdvancedRobot {
 		
 		while(true){
 			
-			try{
-				decideWhatToDo();
-			}
-			catch (Exception e) {}
+			decideWhatToDo();
 		}
 	}
 
