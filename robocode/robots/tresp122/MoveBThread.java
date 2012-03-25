@@ -19,27 +19,28 @@ public class MoveBThread extends BThread {
 				
 				if (mHitWalls.isEmpty()){
 					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 200));
-					
 					if (Math.random() > 0.5)
 						mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
 					
 					else
 						mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_LEFT, 0, 90));
+					
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 150));
 				}
 				else{
 					
 					double degree = mHitWalls.poll().getBearing() - 100;
 					
 					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 5, degree));
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 150));
 				}
-				
-				waitUntilTheRobotIsNotMoving();
 			}
 			finally {
 				mLock.unlock();
 			}
 		}
+		
+		waitUntilTheRobotIsNotMoving();
 	}
 
 	protected void waitUntilTheRobotIsNotMoving() {

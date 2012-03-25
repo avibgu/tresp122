@@ -37,8 +37,9 @@ public abstract class BThread implements Runnable {
 	}
 	
 	public void stop() {
-		mLock.unlock();
+		mLock.lock();
 		mDontStop = false;
+		mLock.unlock();
 	}
 	
 	public abstract void decideWhatToDo();
