@@ -17,8 +17,20 @@ public class MoveBThread implements BThread {
 	public void run() {
 		
 		while(mDontStop) {
-			mRobot.ahead(getID(), 100);
-			mRobot.turnRight(getID(), 90);
+			
+			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 100));
+			mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
+			
+			waitSomeTime();
+		}
+	}
+
+	protected void waitSomeTime() {
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

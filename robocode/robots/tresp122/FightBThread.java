@@ -26,6 +26,17 @@ public class FightBThread implements BThread {
 		
 		while(mDontStop){
 
+			synchronized (mScannedRobots) {
+				
+				while(mScannedRobots.isEmpty())
+					try {
+						mScannedRobots.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+			
 			decideWhatToDo();
 		}
 	}
@@ -42,9 +53,8 @@ public class FightBThread implements BThread {
 					
 					double degree = mRobot.getHeading() - mRobot.getGunHeading() + event.getBearing();
 					
-					mRobot.turnGunRight(getID(), degree);
-					
-					mRobot.fire(getID(), Rules.MAX_BULLET_POWER);
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_GUN_RIGHT, 10, degree));
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.FIRE, 10, Rules.MAX_BULLET_POWER));
 				}
 			}
 		}
@@ -59,11 +69,13 @@ public class FightBThread implements BThread {
 	public void onScannedRobot(ScannedRobotEvent event) {
 		synchronized (mScannedRobots) {
 			mScannedRobots.add(event);
+			mScannedRobots.notifyAll();
 		}
 	}
 
 	public void stop() {
 		mDontStop = false;
+		mScannedRobots.notifyAll();
 	}
 
 }
