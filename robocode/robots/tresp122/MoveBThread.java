@@ -31,7 +31,7 @@ public class MoveBThread extends BThread {
 					
 					double degree = mHitWalls.poll().getBearing() - 100;
 					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 5, degree));
+					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 6, degree));
 					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 5, 150));
 				}
 			}
@@ -45,16 +45,20 @@ public class MoveBThread extends BThread {
 
 	protected void waitUntilTheRobotIsNotMoving() {
 		
-		while(!new MoveCompleteCondition(mRobot).test() && mDontStop){
+		try {
 			
-			try {
+			while(!new MoveCompleteCondition(mRobot).test() && mDontStop){
 				
-				Thread.sleep(200);
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
+				try {
+					
+					Thread.sleep(200);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		catch(Exception e){}
 	}
 	
 	@Override

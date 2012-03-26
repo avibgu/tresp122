@@ -10,12 +10,12 @@ import robocode.ScannedRobotEvent;
 
 public abstract class BThread implements Runnable {
 
-	protected Lock mLock;
-	protected AviBatelRobot mRobot;
-	protected boolean mDontStop;
+	protected Lock						mLock;
+	protected AviBatelRobot				mRobot;
+	protected boolean					mDontStop;
 	
-	protected Queue<ScannedRobotEvent> mScannedRobots;
-	protected Queue<HitWallEvent> mHitWalls;
+	protected Queue<ScannedRobotEvent>	mScannedRobots;
+	protected Queue<HitWallEvent>		mHitWalls;
 	
 	public BThread(AviBatelRobot pRobot) {
 
@@ -29,17 +29,13 @@ public abstract class BThread implements Runnable {
 	
 	@Override
 	public void run() {
-		
 		while(mDontStop){
-			
 			decideWhatToDo();
 		}
 	}
 	
 	public void stop() {
-		mLock.lock();
 		mDontStop = false;
-		mLock.unlock();
 	}
 	
 	public abstract void decideWhatToDo();

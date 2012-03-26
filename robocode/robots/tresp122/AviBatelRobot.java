@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -20,24 +19,22 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AviBatelRobot extends AdvancedRobot {
 	
 	protected Lock mLock;
+	protected boolean dontStop;
 	
 	protected PriorityQueue<BThreadEvent> mEvents;
 	
 	protected MoveBThread mMoveBThread;
 	protected FightBThread mFightBThread;
 	
+	protected Set<BThread> mAllThreads;
 	protected Set<BThread> mOnScannedRobot;
 	protected Set<BThread> mOnHitWall;
-	
-//	TODO
-//	protected ScheduledExecutorService mExecutor;
+
 	protected ExecutorService mExecutor;
 	
 	public AviBatelRobot() {
 		
-//		TODO
-//		mExecutor = Executors.newSingleThreadScheduledExecutor();
-		mExecutor = Executors.newFixedThreadPool(5);
+		dontStop = true;
 		
 		mLock = new ReentrantLock(true);
 		
@@ -46,14 +43,19 @@ public class AviBatelRobot extends AdvancedRobot {
 		mMoveBThread = new MoveBThread(this);
 		mFightBThread = new FightBThread(this);
 		
+		mAllThreads = new HashSet<BThread>();
 		mOnScannedRobot = new HashSet<BThread>();
 		mOnHitWall = new HashSet<BThread>();
 		
+		mAllThreads.add(mMoveBThread);
 		mOnScannedRobot.add(mMoveBThread);
 		mOnHitWall.add(mMoveBThread);
 		
+		mAllThreads.add(mFightBThread);
 		mOnScannedRobot.add(mFightBThread);
 		mOnHitWall.add(mFightBThread);
+		
+		mExecutor = Executors.newSingleThreadExecutor();
 	}
 
 	public void run() {
@@ -64,15 +66,11 @@ public class AviBatelRobot extends AdvancedRobot {
 		setAdjustGunForRobotTurn(true);
 		
 		setTurnRadarLeft(Double.MAX_VALUE);
-		
-//		TODO
-//		new Thread(mMoveBThread).start();
-//		new Thread(mFightBThread).start();
-		
-		mExecutor.execute(mMoveBThread);
-		mExecutor.execute(mFightBThread);
-		
-		while(true){
+
+		new Thread(mMoveBThread).start();
+		new Thread(mFightBThread).start();
+	
+		while(dontStop){
 			
 			decideWhatToDo();
 		}
@@ -144,7 +142,7 @@ public class AviBatelRobot extends AdvancedRobot {
 	}
 
 	
-	// Events:
+	// Events from the Battlefield:
 	
 	
 	@Override
@@ -163,11 +161,13 @@ public class AviBatelRobot extends AdvancedRobot {
 
 	public void addEvent(BThreadID id, BThreadEvent event) {
 
-		mLock.lock();
-
-		mEvents.add(event);
-
-		mLock.unlock();
+		try {
+			
+			mLock.lock();
+			mEvents.add(event);
+			mLock.unlock();
+		}
+		catch (Exception e) {}
 	}
 
 	
@@ -176,31 +176,28 @@ public class AviBatelRobot extends AdvancedRobot {
 	
 	@Override
 	public void onWin(WinEvent event) {
-		super.onWin(event);
-		stopAllThreads();		
+		stopAllThreads(event);
 	}
 	
 	@Override
 	public void onDeath(DeathEvent event) {
-		super.onDeath(event);
-		stopAllThreads();		
+		stopAllThreads(event);
 	}
 	
 	@Override
 	public void onBattleEnded(BattleEndedEvent event) {
-		super.onBattleEnded(event);
-		stopAllThreads();
+		stopAllThreads(event);
 	}
 
-	private void stopAllThreads() {
-
-		mMoveBThread.stop();
-		mFightBThread.stop();
+	private void stopAllThreads(Event event) {
 		
-		mExecutor.shutdownNow();
-
-		while(!mExecutor.isShutdown()) continue;
+		dontStop = false;
 		
-		mLock.unlock();
+		setStop();
+		clearAllEvents();
+		
+		mExecutor.shutdown();
+		
+		new Thread(new NotifierThread(mAllThreads, event)).start();
 	}
 }
