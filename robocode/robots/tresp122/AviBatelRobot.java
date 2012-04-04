@@ -29,8 +29,6 @@ public class AviBatelRobot extends AdvancedRobot {
 	protected Set<BThread> mAllThreads;
 	protected Set<BThread> mOnScannedRobot;
 	protected Set<BThread> mOnHitWall;
-
-	protected ExecutorService mExecutor;
 	
 	public AviBatelRobot() {
 		
@@ -54,8 +52,6 @@ public class AviBatelRobot extends AdvancedRobot {
 		mAllThreads.add(mFightBThread);
 		mOnScannedRobot.add(mFightBThread);
 		mOnHitWall.add(mFightBThread);
-		
-		mExecutor = Executors.newSingleThreadExecutor();
 	}
 
 	public void run() {
@@ -147,12 +143,12 @@ public class AviBatelRobot extends AdvancedRobot {
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		mExecutor.execute(new NotifierThread(mOnScannedRobot, event));
+		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
 	}
 	
 	@Override
 	public void onHitWall(HitWallEvent event) {
-		mExecutor.execute(new NotifierThread(mOnHitWall, event));
+		new Thread(new NotifierThread(mOnHitWall, event)).start();
 	}
 	
 	
@@ -195,8 +191,6 @@ public class AviBatelRobot extends AdvancedRobot {
 		
 		setStop();
 		clearAllEvents();
-		
-		mExecutor.shutdown();
 		
 		new Thread(new NotifierThread(mAllThreads, event)).start();
 	}

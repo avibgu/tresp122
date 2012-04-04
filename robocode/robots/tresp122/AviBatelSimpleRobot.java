@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import robocode.Bullet;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
 import robocode.Robot;
