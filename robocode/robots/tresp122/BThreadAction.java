@@ -1,23 +1,23 @@
 package tresp122;
 
-public class BThreadEvent {
+public class BThreadAction {
 
-	protected BThreadEventType	mType;
+	protected BThreadActionType	mType;
 	protected int				mPriority;
 	protected double			mValue;
 	
-	public BThreadEvent(BThreadEventType pType, int pPriority, double pValue) {
+	public BThreadAction(BThreadActionType pType, int pPriority, double pValue) {
 		
 		setType(pType);
 		setPriority(pPriority);
 		setValue(pValue);
 	}
 
-	public BThreadEventType getType() {
+	public BThreadActionType getType() {
 		return mType;
 	}
 
-	public void setType(BThreadEventType mType) {
+	public void setType(BThreadActionType mType) {
 		this.mType = mType;
 	}
 

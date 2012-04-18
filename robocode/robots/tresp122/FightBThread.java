@@ -10,7 +10,7 @@ public class FightBThread extends BThread {
 		super(pRobot);
 	}
 
-	public void decideWhatToDo() {
+	public void decideWhatActionToPerform() {
 
 		 if (mLock.tryLock()) {
 
@@ -24,8 +24,8 @@ public class FightBThread extends BThread {
 	  					
 						 double degree = mRobot.getHeading() - mRobot.getGunHeading() + event.getBearing();
 	  					
-						 mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_GUN_RIGHT, 11, degree));
-						 mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.FIRE, 10, Rules.MAX_BULLET_POWER));
+						 mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.TURN_GUN_RIGHT, 11, degree));
+						 mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.FIRE, 10, Rules.MAX_BULLET_POWER));
 					 }
 				 }
 			 }

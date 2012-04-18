@@ -11,7 +11,7 @@ public class MoveBThread extends BThread {
 	}
 
 	@Override
-	public void decideWhatToDo() {
+	public void decideWhatActionToPerform() {
 
 		if (mLock.tryLock()) {
 
@@ -20,19 +20,19 @@ public class MoveBThread extends BThread {
 				if (mHitWalls.isEmpty()){
 					
 					if (Math.random() > 0.5)
-						mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 0, 90));
+						mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.TURN_RIGHT, 0, 90));
 					
 					else
-						mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_LEFT, 0, 90));
+						mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.TURN_LEFT, 0, 90));
 					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 0, 150));
+					mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.AHEAD, 0, 150));
 				}
 				else{
 					
 					double degree = mHitWalls.poll().getBearing() - 100;
 					
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.TURN_RIGHT, 6, degree));
-					mRobot.addEvent(getID(), new BThreadEvent(BThreadEventType.AHEAD, 5, 150));
+					mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.TURN_RIGHT, 6, degree));
+					mCoordinator.addAction(getID(), new BThreadAction(BThreadActionType.AHEAD, 5, 150));
 				}
 			}
 			finally {

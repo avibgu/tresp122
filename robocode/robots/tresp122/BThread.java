@@ -12,6 +12,7 @@ public abstract class BThread implements Runnable {
 
 	protected Lock						mLock;
 	protected AviBatelRobot				mRobot;
+	protected Coordinator				mCoordinator;
 	protected boolean					mDontStop;
 	
 	protected Queue<ScannedRobotEvent>	mScannedRobots;
@@ -21,6 +22,7 @@ public abstract class BThread implements Runnable {
 
 		mLock = new ReentrantLock(true);
 		mRobot = pRobot;
+		mCoordinator = pRobot;
 		mDontStop = true;
 		
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
@@ -30,7 +32,7 @@ public abstract class BThread implements Runnable {
 	@Override
 	public void run() {
 		while(mDontStop){
-			decideWhatToDo();
+			decideWhatActionToPerform();
 		}
 	}
 	
@@ -38,7 +40,7 @@ public abstract class BThread implements Runnable {
 		mDontStop = false;
 	}
 	
-	public abstract void decideWhatToDo();
+	public abstract void decideWhatActionToPerform();
 
 	public abstract BThreadID getID();
 

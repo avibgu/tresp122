@@ -6,8 +6,6 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,12 +14,12 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * AviBatelRobot - a robot by (your name here)
  */
-public class AviBatelRobot extends AdvancedRobot {
+public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 	protected Lock mLock;
 	protected boolean dontStop;
 	
-	protected PriorityQueue<BThreadEvent> mEvents;
+	protected PriorityQueue<BThreadAction> mActions;
 	
 	protected MoveBThread mMoveBThread;
 	protected FightBThread mFightBThread;
@@ -36,7 +34,7 @@ public class AviBatelRobot extends AdvancedRobot {
 		
 		mLock = new ReentrantLock(true);
 		
-		mEvents = new PriorityQueue<BThreadEvent>(20, new EventsComparator());
+		mActions = new PriorityQueue<BThreadAction>(20, new ActionsComparator());
 		
 		mMoveBThread = new MoveBThread(this);
 		mFightBThread = new FightBThread(this);
@@ -72,13 +70,14 @@ public class AviBatelRobot extends AdvancedRobot {
 		}
 	}
 
-	private void decideWhatToDo() {
+	@Override
+	public void decideWhatToDo() {
 
 		mLock.lock();
 		
-		if(!mEvents.isEmpty()){
+		if(!mActions.isEmpty()){
 
-			BThreadEvent event = mEvents.poll();
+			BThreadAction event = mActions.poll();
 			
 			switch (event.getType()) {
 				
@@ -152,15 +151,16 @@ public class AviBatelRobot extends AdvancedRobot {
 	}
 	
 	
-	// Basic Moves:
+	// Coordinator:
 	
 
-	public void addEvent(BThreadID id, BThreadEvent event) {
+	@Override
+	public void addAction(BThreadID id, BThreadAction event) {
 
 		try {
 			
 			mLock.lock();
-			mEvents.add(event);
+			mActions.add(event);
 			mLock.unlock();
 		}
 		catch (Exception e) {}

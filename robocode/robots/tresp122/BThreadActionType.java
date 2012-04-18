@@ -1,6 +1,6 @@
 package tresp122;
 
-public enum BThreadEventType {
+public enum BThreadActionType {
 
 	FIRE,
 	AHEAD,
