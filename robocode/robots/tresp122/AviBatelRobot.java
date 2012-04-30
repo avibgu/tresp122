@@ -83,47 +83,38 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 				
 				case FIRE:
 					setFire(event.getValue());
-//					fire(event.getValue());
 					break;
 					
 				case AHEAD:
 					setAhead(event.getValue());
-//					ahead(event.getValue());
 					break;
 					
 				case BACK:
 					setBack(event.getValue());
-//					back(event.getValue());
 					break;
 					
 				case TURN_LEFT:
 					setTurnLeft(event.getValue());
-//					turnLeft(event.getValue());
 					break;
 					
 				case TURN_RIGHT:
 					setTurnRight(event.getValue());
-//					turnRight(event.getValue());
 					break;
 					
 				case TURN_GUN_LEFT:
 					setTurnGunLeft(event.getValue());
-//					turnGunLeft(event.getValue());
 					break;
 					
 				case TURN_GUN_RIGHT:
 					setTurnGunRight(event.getValue());
-//					turnGunRight(event.getValue());
 					break;
 					
 				case TURN_RADAR_LEFT:
 					setTurnRadarLeft(event.getValue());
-//					turnRadarLeft(event.getValue());
 					break;
 					
 				case TURN_RADAR_RIGHT:
 					setTurnRadarRight(event.getValue());
-//					turnRadarRight(event.getValue());
 					break;
 			}
 
@@ -142,12 +133,21 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
+//		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
+		notifyAboutEvent(event, mOnScannedRobot);
 	}
 	
+	private void notifyAboutEvent(Event pEvent,
+			Set<BThread> pOnScannedRobot) {
+
+		for (BThread bThread : pOnScannedRobot)
+			bThread.notifyAboutEvent(pEvent);
+	}
+
 	@Override
 	public void onHitWall(HitWallEvent event) {
-		new Thread(new NotifierThread(mOnHitWall, event)).start();
+//		new Thread(new NotifierThread(mOnHitWall, event)).start();
+		notifyAboutEvent(event, mOnHitWall);
 	}
 	
 	
@@ -155,7 +155,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 
 	@Override
-	public void addAction(BThreadID id, BThreadAction event) {
+	public void addAction(BThreadAction event) {
 
 		try {
 			
