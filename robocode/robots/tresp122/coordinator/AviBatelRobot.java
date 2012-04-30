@@ -4,6 +4,7 @@ import robocode.*;
 import tresp122.action.ActionsComparator;
 import tresp122.action.BThreadAction;
 import tresp122.bthreads.AvoidBulletsBThread;
+import tresp122.bthreads.AvoidCollisionsBThread;
 import tresp122.bthreads.BThread;
 import tresp122.bthreads.FightBThread;
 import tresp122.bthreads.MoveBThread;
@@ -31,11 +32,13 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	protected MoveBThread mMoveBThread;
 	protected FightBThread mFightBThread;
 	protected AvoidBulletsBThread mAvoidBulletsBThread;
+	protected AvoidCollisionsBThread mAvoidCollisionsBThread;
 	
 	protected Set<BThread> mAllThreads;
 	protected Set<BThread> mOnScannedRobot;
-	protected Set<BThread> mOnHitWall;
 	protected Set<BThread> mOnHitByBullet;
+	protected Set<BThread> mOnHitWall;
+	protected Set<BThread> mOnHitRobot;
 	
 	public AviBatelRobot() {
 		
@@ -48,20 +51,25 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mMoveBThread = new MoveBThread(this);
 		mFightBThread = new FightBThread(this);
 		mAvoidBulletsBThread = new AvoidBulletsBThread(this);
+		mAvoidCollisionsBThread = new AvoidCollisionsBThread(this);
 		
 		mAllThreads = new HashSet<BThread>();
-		mOnScannedRobot = new HashSet<BThread>();
-		mOnHitWall = new HashSet<BThread>();
+		mOnScannedRobot = new HashSet<BThread>();		
 		mOnHitByBullet = new HashSet<BThread>();
+		mOnHitWall = new HashSet<BThread>();
+		mOnHitRobot = new HashSet<BThread>();
 		
-		mAllThreads.add(mMoveBThread);
-		mOnHitWall.add(mMoveBThread);
+		mAllThreads.add(mMoveBThread);		
 		
 		mAllThreads.add(mFightBThread);
 		mOnScannedRobot.add(mFightBThread);
 		
 		mAllThreads.add(mAvoidBulletsBThread);
 		mOnHitByBullet.add(mAvoidBulletsBThread);
+		
+		mAllThreads.add(mAvoidCollisionsBThread);
+		mOnHitWall.add(mAvoidCollisionsBThread);
+		mOnHitRobot.add(mAvoidCollisionsBThread);
 	}
 
 	public void run() {
@@ -76,6 +84,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		new Thread(mMoveBThread).start();
 		new Thread(mFightBThread).start();
 		new Thread(mAvoidBulletsBThread).start();
+		new Thread(mAvoidCollisionsBThread).start();
 	
 		while(dontStop){
 			
@@ -158,6 +167,11 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	@Override
 	public void onHitByBullet(HitByBulletEvent pEvent) {
 		new Thread(new NotifierThread(mOnHitByBullet, pEvent)).start();
+	}
+	
+	@Override
+	public void onHitRobot(HitRobotEvent pEvent) {
+		new Thread(new NotifierThread(mOnHitRobot, pEvent)).start();
 	}
 	
 	// Coordinator:
