@@ -1,4 +1,4 @@
-package tresp122;
+package tresp122.bthreads;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -6,6 +6,9 @@ import java.util.Queue;
 import robocode.Event;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
+import tresp122.action.BThreadAction;
+import tresp122.action.BThreadActionType;
+import tresp122.coordinator.AviBatelRobot;
 
 public class FightBThread extends BThread {
 	

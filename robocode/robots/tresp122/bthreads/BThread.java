@@ -1,9 +1,11 @@
-package tresp122;
+package tresp122.bthreads;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import robocode.Event;
+import tresp122.coordinator.AviBatelRobot;
+import tresp122.coordinator.Coordinator;
 
 public abstract class BThread implements Runnable {
 

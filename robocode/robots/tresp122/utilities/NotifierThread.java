@@ -1,4 +1,4 @@
-package tresp122;
+package tresp122.utilities;
 
 import java.util.Set;
 
@@ -6,6 +6,7 @@ import robocode.BattleEndedEvent;
 import robocode.DeathEvent;
 import robocode.Event;
 import robocode.WinEvent;
+import tresp122.bthreads.BThread;
 
 public class NotifierThread implements Runnable {
 

@@ -1,6 +1,12 @@
-package tresp122;
+package tresp122.coordinator;
 
 import robocode.*;
+import tresp122.action.ActionsComparator;
+import tresp122.action.BThreadAction;
+import tresp122.bthreads.BThread;
+import tresp122.bthreads.FightBThread;
+import tresp122.bthreads.MoveBThread;
+import tresp122.utilities.NotifierThread;
 
 import java.awt.Color;
 import java.util.HashSet;
@@ -136,12 +142,12 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 //		notifyAboutEvent(event, mOnScannedRobot);
 	}
 	
-	private void notifyAboutEvent(Event pEvent,
-			Set<BThread> pOnScannedRobot) {
-
-		for (BThread bThread : pOnScannedRobot)
-			bThread.notifyAboutEvent(pEvent);
-	}
+//	private void notifyAboutEvent(Event pEvent,
+//			Set<BThread> pOnScannedRobot) {
+//
+//		for (BThread bThread : pOnScannedRobot)
+//			bThread.notifyAboutEvent(pEvent);
+//	}
 
 	@Override
 	public void onHitWall(HitWallEvent event) {

@@ -1,4 +1,4 @@
-package tresp122;
+package tresp122.action;
 
 public class BThreadAction {
 
