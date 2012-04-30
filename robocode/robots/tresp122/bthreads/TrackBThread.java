@@ -33,37 +33,27 @@ public class TrackBThread extends BThread {
 
 				HitByBulletEvent event = mHitByBullet.poll();
 
-				mLock.unlock();
-
 				// TODO: ..
 			}
-			
-			else
-				mLock.unlock();
+
 			
 			if (!mScannedRobots.isEmpty()) {
 
 				ScannedRobotEvent event = mScannedRobots.poll();
 
-				mLock.unlock();
-
 				// TODO: ..
 			}
-			
-			else
-				mLock.unlock();
+
 			
 			if (!mHitRobot.isEmpty()) {
 
 				HitRobotEvent event = mHitRobot.poll();
 
-				mLock.unlock();
 
 				// TODO: ..
 			}
 			
-			else
-				mLock.unlock();
+			mLock.unlock();
 		}
 
 	}
