@@ -54,7 +54,6 @@ public class FightBThread extends BThread {
 			mScannedRobots.add((ScannedRobotEvent) pEvent);
 			
 			mLock.unlock();
-
 		}
 	}
 }

@@ -7,7 +7,9 @@ import tresp122.bthreads.AvoidBulletsBThread;
 import tresp122.bthreads.AvoidCollisionsBThread;
 import tresp122.bthreads.BThread;
 import tresp122.bthreads.FightBThread;
+import tresp122.bthreads.KeepEnergyBThread;
 import tresp122.bthreads.MoveBThread;
+import tresp122.bthreads.TrackBThread;
 import tresp122.utilities.NotifierThread;
 
 import java.awt.Color;
@@ -29,10 +31,12 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 	protected PriorityQueue<BThreadAction> mActions;
 	
-	protected MoveBThread mMoveBThread;
-	protected FightBThread mFightBThread;
-	protected AvoidBulletsBThread mAvoidBulletsBThread;
-	protected AvoidCollisionsBThread mAvoidCollisionsBThread;
+	protected MoveBThread				mMoveBThread;
+	protected FightBThread				mFightBThread;
+	protected AvoidBulletsBThread		mAvoidBulletsBThread;
+	protected AvoidCollisionsBThread	mAvoidCollisionsBThread;
+	protected KeepEnergyBThread			mKeepEnergyBThread;
+	protected TrackBThread				mTrackBThread;
 	
 	protected Set<BThread> mAllThreads;
 	protected Set<BThread> mOnScannedRobot;
@@ -52,6 +56,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mFightBThread = new FightBThread(this);
 		mAvoidBulletsBThread = new AvoidBulletsBThread(this);
 		mAvoidCollisionsBThread = new AvoidCollisionsBThread(this);
+		mKeepEnergyBThread = new KeepEnergyBThread(this);
+		mTrackBThread = new TrackBThread(this);
 		
 		mAllThreads = new HashSet<BThread>();
 		mOnScannedRobot = new HashSet<BThread>();		
@@ -70,6 +76,13 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mAllThreads.add(mAvoidCollisionsBThread);
 		mOnHitWall.add(mAvoidCollisionsBThread);
 		mOnHitRobot.add(mAvoidCollisionsBThread);
+		
+		mAllThreads.add(mKeepEnergyBThread);
+		
+		mAllThreads.add(mTrackBThread);
+		mOnHitByBullet.add(mTrackBThread);
+		mOnScannedRobot.add(mTrackBThread);
+		mOnHitRobot.add(mTrackBThread);
 	}
 
 	public void run() {
@@ -85,6 +98,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		new Thread(mFightBThread).start();
 		new Thread(mAvoidBulletsBThread).start();
 		new Thread(mAvoidCollisionsBThread).start();
+		new Thread(mKeepEnergyBThread).start();
+		new Thread(mTrackBThread).start();
 	
 		while(dontStop){
 			
@@ -148,6 +163,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 			mLock.unlock();
 			doNothing();
 		}
+		
+		//TODO: clean the queue...
 	}
 
 	
