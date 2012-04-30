@@ -9,8 +9,8 @@ import robocode.WinEvent;
 
 public class NotifierThread implements Runnable {
 
-	private Set<BThread> mThreads;
-	private Event mEvent;
+	private Set<BThread>	mThreads;
+	private Event			mEvent;
 
 	public NotifierThread(Set<BThread> pThreads, Event pEvent) {
 
@@ -26,13 +26,14 @@ public class NotifierThread implements Runnable {
 			if (mEvent instanceof WinEvent) 
 				bThread.stop();
 			
-			if (mEvent instanceof DeathEvent) 
+			else if (mEvent instanceof DeathEvent) 
 				bThread.stop();
 			
-			if (mEvent instanceof BattleEndedEvent) 
+			else if (mEvent instanceof BattleEndedEvent) 
 				bThread.stop();
 			
-			bThread.notifyAboutEvent(mEvent);
+			else
+				bThread.notifyAboutEvent(mEvent);
 		}
 	}
 }

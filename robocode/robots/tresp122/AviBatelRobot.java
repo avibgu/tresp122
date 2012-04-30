@@ -44,12 +44,10 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mOnHitWall = new HashSet<BThread>();
 		
 		mAllThreads.add(mMoveBThread);
-		mOnScannedRobot.add(mMoveBThread);
 		mOnHitWall.add(mMoveBThread);
 		
 		mAllThreads.add(mFightBThread);
 		mOnScannedRobot.add(mFightBThread);
-		mOnHitWall.add(mFightBThread);
 	}
 
 	public void run() {
@@ -78,6 +76,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		if(!mActions.isEmpty()){
 
 			BThreadAction event = mActions.poll();
+			
+			mLock.unlock();
 			
 			switch (event.getType()) {
 				
@@ -121,10 +121,9 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 			execute();
 		}
 		else {
+			mLock.unlock();
 			doNothing();
 		}
-		
-		mLock.unlock();
 	}
 
 	
@@ -133,8 +132,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-//		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
-		notifyAboutEvent(event, mOnScannedRobot);
+		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
+//		notifyAboutEvent(event, mOnScannedRobot);
 	}
 	
 	private void notifyAboutEvent(Event pEvent,
@@ -146,8 +145,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 
 	@Override
 	public void onHitWall(HitWallEvent event) {
-//		new Thread(new NotifierThread(mOnHitWall, event)).start();
-		notifyAboutEvent(event, mOnHitWall);
+		new Thread(new NotifierThread(mOnHitWall, event)).start();
+//		notifyAboutEvent(event, mOnHitWall);
 	}
 	
 	
@@ -155,12 +154,12 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 
 	@Override
-	public void addAction(BThreadAction event) {
+	public void addAction(BThreadAction action) {
 
 		try {
 			
 			mLock.lock();
-			mActions.add(event);
+			mActions.add(action);
 			mLock.unlock();
 		}
 		catch (Exception e) {}

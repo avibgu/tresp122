@@ -9,7 +9,7 @@ import robocode.MoveCompleteCondition;
 
 public class MoveBThread extends BThread {
 
-	protected Queue<HitWallEvent>		mHitWalls;
+	protected Queue<HitWallEvent> mHitWalls;
 	
 	public MoveBThread(AviBatelRobot pRobot) {
 		
@@ -36,10 +36,10 @@ public class MoveBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(BThreadActionType.AHEAD, 0, 150));
 			}
 			else{
+
+				double degree = mHitWalls.poll().getBearing() - 100;
 				
 				mLock.unlock();
-				
-				double degree = mHitWalls.poll().getBearing() - 100;
 				
 				mCoordinator.addAction(new BThreadAction(BThreadActionType.TURN_RIGHT, 6, degree));
 				mCoordinator.addAction(new BThreadAction(BThreadActionType.AHEAD, 5, 150));

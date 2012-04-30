@@ -36,6 +36,8 @@ public class FightBThread extends BThread {
 					 mCoordinator.addAction(new BThreadAction(BThreadActionType.FIRE, 10, Rules.MAX_BULLET_POWER));
 				 }
 			 }
+			 else
+				 mLock.unlock();
 		 }
 	}
 
