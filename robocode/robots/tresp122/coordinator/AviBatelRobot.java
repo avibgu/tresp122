@@ -3,6 +3,7 @@ package tresp122.coordinator;
 import robocode.*;
 import tresp122.action.ActionsComparator;
 import tresp122.action.BThreadAction;
+import tresp122.bthreads.AvoidBulletsBThread;
 import tresp122.bthreads.BThread;
 import tresp122.bthreads.FightBThread;
 import tresp122.bthreads.MoveBThread;
@@ -29,10 +30,12 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
 	protected MoveBThread mMoveBThread;
 	protected FightBThread mFightBThread;
+	protected AvoidBulletsBThread mAvoidBulletsBThread;
 	
 	protected Set<BThread> mAllThreads;
 	protected Set<BThread> mOnScannedRobot;
 	protected Set<BThread> mOnHitWall;
+	protected Set<BThread> mOnHitByBullet;
 	
 	public AviBatelRobot() {
 		
@@ -44,16 +47,21 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		mMoveBThread = new MoveBThread(this);
 		mFightBThread = new FightBThread(this);
+		mAvoidBulletsBThread = new AvoidBulletsBThread(this);
 		
 		mAllThreads = new HashSet<BThread>();
 		mOnScannedRobot = new HashSet<BThread>();
 		mOnHitWall = new HashSet<BThread>();
+		mOnHitByBullet = new HashSet<BThread>();
 		
 		mAllThreads.add(mMoveBThread);
 		mOnHitWall.add(mMoveBThread);
 		
 		mAllThreads.add(mFightBThread);
 		mOnScannedRobot.add(mFightBThread);
+		
+		mAllThreads.add(mAvoidBulletsBThread);
+		mOnHitByBullet.add(mAvoidBulletsBThread);
 	}
 
 	public void run() {
@@ -67,6 +75,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 
 		new Thread(mMoveBThread).start();
 		new Thread(mFightBThread).start();
+		new Thread(mAvoidBulletsBThread).start();
 	
 		while(dontStop){
 			
@@ -139,22 +148,17 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
 		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
-//		notifyAboutEvent(event, mOnScannedRobot);
 	}
-	
-//	private void notifyAboutEvent(Event pEvent,
-//			Set<BThread> pOnScannedRobot) {
-//
-//		for (BThread bThread : pOnScannedRobot)
-//			bThread.notifyAboutEvent(pEvent);
-//	}
 
 	@Override
 	public void onHitWall(HitWallEvent event) {
 		new Thread(new NotifierThread(mOnHitWall, event)).start();
-//		notifyAboutEvent(event, mOnHitWall);
 	}
 	
+	@Override
+	public void onHitByBullet(HitByBulletEvent pEvent) {
+		new Thread(new NotifierThread(mOnHitByBullet, pEvent)).start();
+	}
 	
 	// Coordinator:
 	

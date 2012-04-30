@@ -12,7 +12,7 @@ import tresp122.coordinator.AviBatelRobot;
 
 public class FightBThread extends BThread {
 	
-	protected Queue<ScannedRobotEvent>	mScannedRobots;
+	protected Queue<ScannedRobotEvent> mScannedRobots;
 
 	public FightBThread(AviBatelRobot pRobot) {
 		
