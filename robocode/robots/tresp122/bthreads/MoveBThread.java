@@ -33,7 +33,7 @@ public class MoveBThread extends BThread {
 
 		try {
 
-			while (!new MoveCompleteCondition(mRobot).test() && mDontStop) {
+//			while (!new MoveCompleteCondition(mRobot).test() && mDontStop) {
 
 				try {
 
@@ -41,7 +41,7 @@ public class MoveBThread extends BThread {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}
+//			}
 		} catch (Exception e) {
 		}
 	}

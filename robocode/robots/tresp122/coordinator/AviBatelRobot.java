@@ -3,6 +3,7 @@ package tresp122.coordinator;
 import robocode.*;
 import tresp122.action.ActionsComparator;
 import tresp122.action.BThreadAction;
+import tresp122.action.BThreadActionType;
 import tresp122.bthreads.AvoidBulletsBThread;
 import tresp122.bthreads.AvoidCollisionsBThread;
 import tresp122.bthreads.BThread;
@@ -88,6 +89,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	public void run() {
 
 		setColors(Color.black, Color.red, Color.green); // body,gun,radar
+		setBulletColor(Color.yellow);
 		
 		setAdjustRadarForRobotTurn(true);
 		setAdjustGunForRobotTurn(true);
@@ -115,6 +117,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		if(!mActions.isEmpty()){
 
 			BThreadAction event = mActions.poll();
+			
+			removeSimilarActions(event.getType());
 			
 			mLock.unlock();
 			
@@ -171,6 +175,17 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	// Events from the Battlefield:
 	
 	
+	private void removeSimilarActions(BThreadActionType pType) {
+
+		Set<BThreadAction> toRemove = new HashSet<BThreadAction>();
+		
+		for (BThreadAction action : mActions)
+			if (action.getType().equals(pType))
+				toRemove.add(action);
+		
+		mActions.removeAll(toRemove);
+	}
+
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
 		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
