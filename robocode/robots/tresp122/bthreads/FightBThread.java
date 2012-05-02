@@ -1,7 +1,5 @@
 package tresp122.bthreads;
 
-import java.util.Stack;
-
 import robocode.Event;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
@@ -14,7 +12,7 @@ public class FightBThread extends BThread {
 	
 //	protected Queue<ScannedRobotEvent> mScannedRobots;
 	
-	protected Stack<ScannedRobotEvent>	mScannedRobots;
+	protected ScannedRobotEvent			mScannedRobots;
 	protected double					mBulletPower;
 	protected int						mFirePriority;
 
@@ -22,7 +20,7 @@ public class FightBThread extends BThread {
 		
 		super(pRobot);
 		
-		mScannedRobots = new Stack<ScannedRobotEvent>();
+		mScannedRobots = null;
 		mBulletPower = Rules.MAX_BULLET_POWER;
 		mFirePriority = 10;
 	}
@@ -31,10 +29,12 @@ public class FightBThread extends BThread {
 
 		 if (mLock.tryLock()) {
 			 
-			 if (!mScannedRobots.isEmpty()){
+			 if (null != mScannedRobots){
       			
-				 ScannedRobotEvent event = mScannedRobots.pop();
+				 ScannedRobotEvent event = mScannedRobots;
 
+				 mScannedRobots = null;
+				 
 				 mLock.unlock();
 				 
 				 if (mRobot.getGunHeat() == 0) {
@@ -57,7 +57,7 @@ public class FightBThread extends BThread {
 
 			mLock.lock();
 			
-			mScannedRobots.push((ScannedRobotEvent) pEvent);
+			mScannedRobots = (ScannedRobotEvent) pEvent;
 			
 			mLock.unlock();
 		}

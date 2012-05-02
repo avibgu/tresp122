@@ -26,14 +26,14 @@ public class MoveBThread extends BThread {
 		mCoordinator.addAction(new BThreadAction(BThreadActionType.AHEAD, 0,
 				150));
 
-		waitUntilTheRobotIsNotMoving();
+//		waitUntilTheRobotIsNotMoving();
 	}
 
 	protected void waitUntilTheRobotIsNotMoving() {
 
 		try {
 
-//			while (!new MoveCompleteCondition(mRobot).test() && mDontStop) {
+			while (!new MoveCompleteCondition(mRobot).test() && mDontStop) {
 
 				try {
 
@@ -41,7 +41,7 @@ public class MoveBThread extends BThread {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-//			}
+			}
 		} catch (Exception e) {
 		}
 	}
