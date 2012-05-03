@@ -14,6 +14,11 @@ public class BThreadsController {
 	protected KeepEnergyBThread			mKeepEnergyBThread;
 	protected TrackBThread				mTrackBThread;
 	
+	protected KillBThread				mKillBThread;
+	protected StayAliveBThread			mStayAliveBThread;
+	
+	protected SuccessBThread			mSuccessBThread;
+	
 	protected Set<BThread>				mAllBThreads;
 	
 	public BThreadsController(AviBatelRobot pRobot) {
@@ -34,7 +39,14 @@ public class BThreadsController {
 		mAllBThreads.add(mKeepEnergyBThread);
 		mAllBThreads.add(mTrackBThread);
 		
-		// TODO: add 'kill' 'stayAlive' 'success'
+		mKillBThread = new KillBThread(pRobot, getAllBThreads());
+		mStayAliveBThread = new StayAliveBThread(pRobot, getAllBThreads());
+
+		mAllBThreads.add(mKillBThread);
+		mAllBThreads.add(mStayAliveBThread);
+		
+		mSuccessBThread = new SuccessBThread(pRobot, getAllBThreads());
+		mAllBThreads.add(mSuccessBThread);
 		
 		startBThreads();
 	}
@@ -93,6 +105,30 @@ public class BThreadsController {
 		mTrackBThread = pTrackBThread;
 	}
 
+	public KillBThread getKillBThread() {
+		return mKillBThread;
+	}
+
+	public void setKillBThread(KillBThread pKillBThread) {
+		mKillBThread = pKillBThread;
+	}
+
+	public StayAliveBThread getStayAliveBThread() {
+		return mStayAliveBThread;
+	}
+
+	public void setStayAliveBThread(StayAliveBThread pStayAliveBThread) {
+		mStayAliveBThread = pStayAliveBThread;
+	}
+
+	public SuccessBThread getSuccessBThread() {
+		return mSuccessBThread;
+	}
+
+	public void setSuccessBThread(SuccessBThread pSuccessBThread) {
+		mSuccessBThread = pSuccessBThread;
+	}
+	
 	public Set<BThread> getAllBThreads() {
 		return mAllBThreads;
 	}

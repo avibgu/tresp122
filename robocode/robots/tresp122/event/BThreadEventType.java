@@ -8,4 +8,7 @@ public enum BThreadEventType {
 	WE_ARE_GOING_TO_DIE,
 	ENEMY_IS_WEAK,
 	ENEMY_IS_STRONG
+	
+	// These Events are sent from Level-1 BThreads to 'success'
+
 }

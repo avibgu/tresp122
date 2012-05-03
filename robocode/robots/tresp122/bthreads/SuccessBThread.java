@@ -5,9 +5,9 @@ import java.util.Set;
 import robocode.Event;
 import tresp122.coordinator.AviBatelRobot;
 
-public class StayAliveBThread extends BThread {
+public class SuccessBThread extends BThread {
 
-	public StayAliveBThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
+	public SuccessBThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
 		super(pRobot, pBThreadsToRegister);
 	}
 
@@ -22,5 +22,4 @@ public class StayAliveBThread extends BThread {
 		// TODO Auto-generated method stub
 
 	}
-
 }

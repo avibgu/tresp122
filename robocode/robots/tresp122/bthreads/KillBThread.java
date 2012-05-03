@@ -4,13 +4,11 @@ import java.util.Set;
 
 import robocode.Event;
 import tresp122.coordinator.AviBatelRobot;
-import tresp122.coordinator.Coordinator;
 
 public class KillBThread extends BThread {
 
-	public KillBThread(AviBatelRobot pRobot, Coordinator pCoordinator,
-			Set<BThread> pBThreadsToRegister) {
-		super(pRobot, pCoordinator, pBThreadsToRegister);
+	public KillBThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
+		super(pRobot, pBThreadsToRegister);
 	}
 
 	@Override

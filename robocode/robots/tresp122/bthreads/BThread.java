@@ -23,6 +23,10 @@ public abstract class BThread implements Runnable {
 	public BThread(AviBatelRobot pRobot) {
 		this(pRobot, pRobot, new HashSet<BThread>());
 	}
+	
+	public BThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
+		this(pRobot, null, new HashSet<BThread>());
+	}
 
 	public BThread(AviBatelRobot pRobot, Coordinator pCoordinator,
 			Set<BThread> pBThreadsToRegister) {
@@ -79,5 +83,9 @@ public abstract class BThread implements Runnable {
 
 	public void decreasePriority(int pAmount) {
 		mPriority -= pAmount;
+	}
+	
+	public void setCoordinator( Coordinator pCoordinator){
+		mCoordinator = pCoordinator;
 	}
 }

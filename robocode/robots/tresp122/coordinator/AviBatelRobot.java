@@ -46,7 +46,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		initializeMailingLists();
 		
-//		new Thread(new Level1Coordinator(this, mBThreadsController)).start();
+		new Thread(new Level1Coordinator(this, mBThreadsController)).start();
+		new Thread(new Level0Coordinator(this, mBThreadsController)).start();
 	}
 
 	private void initializeMailingLists() {

@@ -1,147 +1,76 @@
 package tresp122.coordinator;
 
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import tresp122.action.ActionsComparator;
 import tresp122.action.BThreadAction;
-import tresp122.bthreads.BThread;
-import tresp122.bthreads.KillBThread;
-import tresp122.bthreads.StayAliveBThread;
+import tresp122.bthreads.BThreadsController;
 
-public class Level1Coordinator implements Coordinator {
+public class Level1Coordinator extends LeveliCoordinator {
 
-	protected Lock							mLock;
-	protected AviBatelRobot					mRobot;
-	protected boolean						mDontStop;
-	protected PriorityQueue<BThreadAction>	mActions;
-	
-	protected Set<BThread>					mAllBThreads;
-	
-	protected KillBThread					mKillBThread;
-	protected StayAliveBThread				mStayAliveBThread;
-	
-	public Level1Coordinator(AviBatelRobot pRobot, Set<BThread> pAllBThreads) {
-
-		mDontStop = true;
-		mRobot = pRobot;
-		mLock = new ReentrantLock(true);
-		mActions = new PriorityQueue<BThreadAction>(20, new ActionsComparator());
-
-		mAllBThreads = pAllBThreads;
-		
-		initializeTheBThreadsOfThisLevel();
-	}
-
-	// TODO
-	public void initializeTheBThreadsOfThisLevel() {
-
-		mKillBThread = new KillBThread(mRobot, this, mAllBThreads);
-		mStayAliveBThread = new StayAliveBThread(mRobot, this, mAllBThreads);
-
-		mAllBThreads.add(mKillBThread);
-		mAllBThreads.add(mStayAliveBThread);
+	public Level1Coordinator(AviBatelRobot pRobot,
+			BThreadsController pBThreadsController) {
+		super(pRobot, pBThreadsController);
 	}
 
 	@Override
-	public void run() {
+	public void setMyselfAsTheCoordinatorOfBThreadsInMyLevel() {
 
-		startBThreads();
-		
-		while (mDontStop) {
-
-			decideWhatToDo();
-
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public void stop() {
-		mDontStop = false;
-	}
-
-	// TODO
-	public void startBThreads() {
-
-		new Thread(mKillBThread).start();
-		new Thread(mStayAliveBThread).start();
+		mBThreadsController.getKillBThread().setCoordinator(this);
+		mBThreadsController.getStayAliveBThread().setCoordinator(this);
 	}
 
 	@Override
-	public void decideWhatToDo() {
+	public void performAction(BThreadAction action) {
 
-		mLock.lock();
-		
-		if(!mActions.isEmpty()){
+		switch (action.getType()) {
 
-			BThreadAction action = mActions.poll();
-			
-			mLock.unlock();
-			
-			switch (action.getType()) {
-				
-				case DECREASE_FIGHT_PRIORITY:
-//					action.getValue();
-					break;
-					
-				case INCREASE_FIGHT_PRIORITY:
-					// TODO:..
-					break;
-					
-				case DECREASE_AVOID_BULLETS_PRIORITY:
-					// TODO:..
-					break;
-					
-				case INCREASE_AVOID_BULLETS_PRIORITY:
-					// TODO:..
-					break;
-					
-				case DECREASE_AVOID_COLLISIONS_PRIORITY:
-					// TODO:..
-					break;
-					
-				case INCREASE_AVOID_COLLISIONS_PRIORITY:
-					// TODO:..
-					break;
-					
-				case INCREASE_KEEP_ENERGY_PRIORITY:
-					// TODO:..
-					break;
-					
-				case DECREASE_KEEP_ENERGY_PRIORITY:
-					// TODO:..
-					break;
-					
-				case INCREASE_TRACK_PRIORITY:
-					// TODO:..
-					break;
-					
-				case DECREASE_TRACK_PRIORITY:
-					// TODO:..
-					break;
-			}
+		case DECREASE_FIGHT_PRIORITY:
+			mBThreadsController.getFightBThread().decreasePriority(
+					(int) action.getValue());
+			break;
+
+		case INCREASE_FIGHT_PRIORITY:
+			mBThreadsController.getFightBThread().increasePriority(
+					(int) action.getValue());
+			break;
+
+		case DECREASE_AVOID_BULLETS_PRIORITY:
+			mBThreadsController.getAvoidBulletsBThread().decreasePriority(
+					(int) action.getValue());
+			break;
+
+		case INCREASE_AVOID_BULLETS_PRIORITY:
+			mBThreadsController.getAvoidBulletsBThread().increasePriority(
+					(int) action.getValue());
+			break;
+
+		case DECREASE_AVOID_COLLISIONS_PRIORITY:
+			mBThreadsController.getAvoidCollisionsBThread().decreasePriority(
+					(int) action.getValue());
+			break;
+
+		case INCREASE_AVOID_COLLISIONS_PRIORITY:
+			mBThreadsController.getAvoidCollisionsBThread().increasePriority(
+					(int) action.getValue());
+			break;
+
+		case DECREASE_KEEP_ENERGY_PRIORITY:
+			mBThreadsController.getKeepEnergyBThread().decreasePriority(
+					(int) action.getValue());
+			break;
+
+		case INCREASE_KEEP_ENERGY_PRIORITY:
+			mBThreadsController.getKeepEnergyBThread().increasePriority(
+					(int) action.getValue());
+			break;
+
+		case DECREASE_TRACK_PRIORITY:
+			mBThreadsController.getTrackBThread().decreasePriority(
+					(int) action.getValue());
+			break;
+
+		case INCREASE_TRACK_PRIORITY:
+			mBThreadsController.getTrackBThread().increasePriority(
+					(int) action.getValue());
+			break;
 		}
-		else {
-			mLock.unlock();
-		}
-	}
-
-	@Override
-	public void addAction(BThreadAction pAction) {
-
-		try {
-			
-			mLock.lock();
-			mActions.add(pAction);
-			mLock.unlock();
-		}
-		catch (Exception e) {}
 	}
 }
