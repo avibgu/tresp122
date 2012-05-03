@@ -72,6 +72,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mOnScannedRobot.add(mFightBThread);
 		
 		mAllThreads.add(mAvoidBulletsBThread);
+		mOnScannedRobot.add(mAvoidBulletsBThread);
 		mOnHitByBullet.add(mAvoidBulletsBThread);
 		
 		mAllThreads.add(mAvoidCollisionsBThread);

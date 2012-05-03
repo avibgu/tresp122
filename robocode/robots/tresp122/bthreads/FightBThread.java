@@ -10,6 +10,11 @@ import tresp122.action.BThreadActionType;
 import tresp122.coordinator.AviBatelRobot;
 import tresp122.utilities.AdvancedEnemyBot;
 
+
+/**
+ * The strategy of this BThread has been taken from:
+ * http://mark.random-article.com/weber/java/robocode/lesson4.html
+ */
 public class FightBThread extends BThread {
 
 	protected ScannedRobotEvent mScannedRobots;
