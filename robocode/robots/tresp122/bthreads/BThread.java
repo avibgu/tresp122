@@ -9,10 +9,11 @@ import tresp122.coordinator.Coordinator;
 
 public abstract class BThread implements Runnable {
 
-	protected Lock						mLock;
-	protected AviBatelRobot				mRobot;
-	protected Coordinator				mCoordinator;
-	protected boolean					mDontStop;
+	protected Lock			mLock;
+	protected AviBatelRobot	mRobot;
+	protected Coordinator	mCoordinator;
+	protected boolean		mDontStop;
+	protected int			mPriority;
 	
 	public BThread(AviBatelRobot pRobot) {
 
@@ -20,6 +21,7 @@ public abstract class BThread implements Runnable {
 		mRobot = pRobot;
 		mCoordinator = pRobot;
 		mDontStop = true;
+		mPriority = 0;
 	}
 	
 	@Override
@@ -45,4 +47,12 @@ public abstract class BThread implements Runnable {
 	public abstract void decideWhichActionToPerform();
 
 	public abstract void notifyAboutEvent(Event pEvent);
+	
+	public void increasePriority(int pAmount) {
+		mPriority += pAmount;
+	}
+
+	public void decreasePriority(int pAmount) {
+		mPriority -= pAmount;
+	}
 }

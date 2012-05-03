@@ -18,7 +18,6 @@ import tresp122.utilities.AdvancedEnemyBot;
 public class FightBThread extends BThread {
 
 	protected ScannedRobotEvent mScannedRobots;
-	protected int mFirePriority;
 	protected AdvancedEnemyBot mEnemy;
 	protected double mFirePower;
 	protected double mDegree;
@@ -28,7 +27,7 @@ public class FightBThread extends BThread {
 		super(pRobot);
 
 		mScannedRobots = null;
-		mFirePriority = 10;
+		mPriority = 10;
 
 		mEnemy = new AdvancedEnemyBot();
 		mFirePower = 0.0;
@@ -50,14 +49,14 @@ public class FightBThread extends BThread {
 				calcDegreeAndFirePower(event);
 
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.TURN_GUN_RIGHT, mFirePriority + 1,
+						BThreadActionType.TURN_GUN_RIGHT, mPriority + 1,
 						mDegree));
 
 				if (mRobot.getGunHeat() == 0
 						&& Math.abs(mRobot.getGunTurnRemaining()) < 10) {
 
 					mCoordinator.addAction(new BThreadAction(
-							BThreadActionType.FIRE, mFirePriority, mFirePower));
+							BThreadActionType.FIRE, mPriority, mFirePower));
 				}
 			}
 

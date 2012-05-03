@@ -22,6 +22,8 @@ public class TrackBThread extends BThread {
 		mHitByBullet = new LinkedList<HitByBulletEvent>();
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
 		mHitRobot = new LinkedList<HitRobotEvent>();
+		
+		mPriority = 7;
 	}
 
 	@Override
@@ -91,5 +93,4 @@ public class TrackBThread extends BThread {
 
 		}
 	}
-
 }

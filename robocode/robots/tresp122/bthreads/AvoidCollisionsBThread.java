@@ -21,6 +21,8 @@ public class AvoidCollisionsBThread extends BThread {
 
 		mHitWall= new LinkedList<HitWallEvent>();
 		mHitRobot = new LinkedList<HitRobotEvent>();
+		
+		mPriority = 50;
 	}
 
 	@Override
@@ -36,8 +38,8 @@ public class AvoidCollisionsBThread extends BThread {
 				
 				mLock.unlock();
 
-				mCoordinator.addAction(new BThreadAction(BThreadActionType.TURN_RIGHT, 60, degree));
-				mCoordinator.addAction(new BThreadAction(BThreadActionType.AHEAD, 50, 150));
+				mCoordinator.addAction(new BThreadAction(BThreadActionType.TURN_RIGHT, mPriority + 1, degree));
+				mCoordinator.addAction(new BThreadAction(BThreadActionType.AHEAD, mPriority, 150));
 			}
 			
 			else if (!mHitRobot.isEmpty()) {
@@ -48,8 +50,8 @@ public class AvoidCollisionsBThread extends BThread {
 				
 				mLock.unlock();
 
-				mCoordinator.addAction(new BThreadAction(BThreadActionType.TURN_RIGHT, 60, degree));
-				mCoordinator.addAction(new BThreadAction(BThreadActionType.BACK, 50, 250));
+				mCoordinator.addAction(new BThreadAction(BThreadActionType.TURN_RIGHT, mPriority + 1, degree));
+				mCoordinator.addAction(new BThreadAction(BThreadActionType.BACK, mPriority, 250));
 			}
 			
 			else
@@ -78,5 +80,4 @@ public class AvoidCollisionsBThread extends BThread {
 			mLock.unlock();
 		}
 	}
-
 }
