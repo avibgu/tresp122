@@ -84,8 +84,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 
 	public void run() {
 
-		setColors(Color.black, Color.red, Color.green); // body,gun,radar
-		setBulletColor(Color.yellow);
+		setColors(Color.DARK_GRAY, Color.BLACK, Color.ORANGE); // body,gun,radar
+		setBulletColor(Color.getHSBColor(17, 17, 71));
 		
 		setAdjustRadarForRobotTurn(true);
 		setAdjustGunForRobotTurn(true);
