@@ -4,13 +4,8 @@ import robocode.*;
 import tresp122.action.ActionsComparator;
 import tresp122.action.BThreadAction;
 import tresp122.action.BThreadActionType;
-import tresp122.bthreads.AvoidBulletsBThread;
-import tresp122.bthreads.AvoidCollisionsBThread;
 import tresp122.bthreads.BThread;
-import tresp122.bthreads.FightBThread;
-import tresp122.bthreads.KeepEnergyBThread;
-import tresp122.bthreads.MoveBThread;
-import tresp122.bthreads.TrackBThread;
+import tresp122.bthreads.BThreadsController;
 import tresp122.utilities.NotifierThread;
 
 import java.awt.Color;
@@ -27,23 +22,17 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	
-	protected Lock mLock;
-	protected boolean dontStop;
+	protected Lock							mLock;
+	protected boolean						dontStop;
 	
-	protected PriorityQueue<BThreadAction> mActions;
+	protected PriorityQueue<BThreadAction>	mActions;
 	
-	protected MoveBThread				mMoveBThread;
-	protected FightBThread				mFightBThread;
-	protected AvoidBulletsBThread		mAvoidBulletsBThread;
-	protected AvoidCollisionsBThread	mAvoidCollisionsBThread;
-	protected KeepEnergyBThread			mKeepEnergyBThread;
-	protected TrackBThread				mTrackBThread;
+	protected BThreadsController			mBThreadsController;
 	
-	protected Set<BThread> mAllBThreads;
-	protected Set<BThread> mOnScannedRobot;
-	protected Set<BThread> mOnHitByBullet;
-	protected Set<BThread> mOnHitWall;
-	protected Set<BThread> mOnHitRobot;
+	protected Set<BThread> 					mOnScannedRobot;
+	protected Set<BThread> 					mOnHitByBullet;
+	protected Set<BThread> 					mOnHitWall;
+	protected Set<BThread> 					mOnHitRobot;
 	
 	public AviBatelRobot() {
 		
@@ -53,50 +42,31 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		mActions = new PriorityQueue<BThreadAction>(20, new ActionsComparator());
 		
-		initializeMailingLists();
-		initializeTheBThreadsOfThisLevel();
+		mBThreadsController = new BThreadsController(this);
 		
-		new Thread(new Level1Coordinator(this, mAllBThreads)).start();
+		initializeMailingLists();
+		
+//		new Thread(new Level1Coordinator(this, mBThreadsController)).start();
 	}
 
 	private void initializeMailingLists() {
 		
-		mAllBThreads = new HashSet<BThread>();
 		mOnScannedRobot = new HashSet<BThread>();		
 		mOnHitByBullet = new HashSet<BThread>();
 		mOnHitWall = new HashSet<BThread>();
 		mOnHitRobot = new HashSet<BThread>();
-	}
+		
+		mOnScannedRobot.add(mBThreadsController.getFightBThread());
 
-	@Override
-	public void initializeTheBThreadsOfThisLevel() {
+		mOnScannedRobot.add(mBThreadsController.getAvoidBulletsBThread());
+		mOnHitByBullet.add(mBThreadsController.getAvoidBulletsBThread());
 		
-		mMoveBThread = new MoveBThread(this);
-		mFightBThread = new FightBThread(this);
-		mAvoidBulletsBThread = new AvoidBulletsBThread(this);
-		mAvoidCollisionsBThread = new AvoidCollisionsBThread(this);
-		mKeepEnergyBThread = new KeepEnergyBThread(this);
-		mTrackBThread = new TrackBThread(this);
+		mOnHitWall.add(mBThreadsController.getAvoidCollisionsBThread());
+		mOnHitRobot.add(mBThreadsController.getAvoidCollisionsBThread());
 		
-		mAllBThreads.add(mMoveBThread);		
-		
-		mAllBThreads.add(mFightBThread);
-		mOnScannedRobot.add(mFightBThread);
-		
-		mAllBThreads.add(mAvoidBulletsBThread);
-		mOnScannedRobot.add(mAvoidBulletsBThread);
-		mOnHitByBullet.add(mAvoidBulletsBThread);
-		
-		mAllBThreads.add(mAvoidCollisionsBThread);
-		mOnHitWall.add(mAvoidCollisionsBThread);
-		mOnHitRobot.add(mAvoidCollisionsBThread);
-		
-		mAllBThreads.add(mKeepEnergyBThread);
-		
-		mAllBThreads.add(mTrackBThread);
-		mOnHitByBullet.add(mTrackBThread);
-		mOnScannedRobot.add(mTrackBThread);
-		mOnHitRobot.add(mTrackBThread);
+		mOnHitByBullet.add(mBThreadsController.getTrackBThread());
+		mOnScannedRobot.add(mBThreadsController.getTrackBThread());
+		mOnHitRobot.add(mBThreadsController.getTrackBThread());
 	}
 
 	public void run() {
@@ -108,24 +78,11 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		setAdjustGunForRobotTurn(true);
 		
 		setTurnRadarLeft(Double.MAX_VALUE);
-
-		startBThreads();
-	
+		
 		while(dontStop){
 			
 			decideWhatToDo();
 		}
-	}
-
-	@Override
-	public void startBThreads() {
-		
-		new Thread(mMoveBThread).start();
-		new Thread(mFightBThread).start();
-		new Thread(mAvoidBulletsBThread).start();
-		new Thread(mAvoidCollisionsBThread).start();
-		new Thread(mKeepEnergyBThread).start();
-		new Thread(mTrackBThread).start();
 	}
 
 	@Override
@@ -259,12 +216,13 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	}
 
 	private void stopAllThreads(Event event) {
-		
+
 		dontStop = false;
-		
+
 		setStop();
 		clearAllEvents();
-		
-		new Thread(new NotifierThread(mAllBThreads, event)).start();
+
+		new Thread(new NotifierThread(mBThreadsController.getAllBThreads(),
+				event)).start();
 	}
 }

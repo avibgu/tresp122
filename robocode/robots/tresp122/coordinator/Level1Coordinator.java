@@ -35,7 +35,7 @@ public class Level1Coordinator implements Coordinator {
 		initializeTheBThreadsOfThisLevel();
 	}
 
-	@Override
+	// TODO
 	public void initializeTheBThreadsOfThisLevel() {
 
 		mKillBThread = new KillBThread(mRobot, this, mAllBThreads);
@@ -67,7 +67,7 @@ public class Level1Coordinator implements Coordinator {
 		mDontStop = false;
 	}
 
-	@Override
+	// TODO
 	public void startBThreads() {
 
 		new Thread(mKillBThread).start();

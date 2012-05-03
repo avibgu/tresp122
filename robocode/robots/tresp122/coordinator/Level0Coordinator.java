@@ -21,18 +21,6 @@ public class Level0Coordinator implements Coordinator {
 	}
 
 	@Override
-	public void initializeTheBThreadsOfThisLevel() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void startBThreads() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		

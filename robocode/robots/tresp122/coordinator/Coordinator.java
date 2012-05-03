@@ -8,9 +8,5 @@ public interface Coordinator extends Runnable{
 	
 	public void decideWhatToDo();
 
-	public void initializeTheBThreadsOfThisLevel();
-
-	public void startBThreads();
-
 	void stop();
 }
