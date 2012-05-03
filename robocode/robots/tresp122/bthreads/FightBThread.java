@@ -1,19 +1,22 @@
 package tresp122.bthreads;
 
+import java.awt.geom.Point2D;
+
 import robocode.Event;
-import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 import tresp122.action.BThreadAction;
 import tresp122.action.BThreadActionType;
 import tresp122.coordinator.AviBatelRobot;
+import tresp122.utilities.AdvancedEnemyBot;
 
 public class FightBThread extends BThread {
 
-	// protected Queue<ScannedRobotEvent> mScannedRobots;
-
 	protected ScannedRobotEvent mScannedRobots;
 	protected int mFirePriority;
+	protected AdvancedEnemyBot mEnemy;
+	protected double mFirePower;
+	protected double mDegree;
 
 	public FightBThread(AviBatelRobot pRobot) {
 
@@ -21,6 +24,10 @@ public class FightBThread extends BThread {
 
 		mScannedRobots = null;
 		mFirePriority = 10;
+
+		mEnemy = new AdvancedEnemyBot();
+		mFirePower = 0.0;
+		mDegree = 0.0;
 	}
 
 	public void decideWhatActionToPerform() {
@@ -35,28 +42,79 @@ public class FightBThread extends BThread {
 
 				mLock.unlock();
 
-				double degree = mRobot.getHeading() - mRobot.getGunHeading()
-						+ event.getBearing();
+				calcDegreeAndFirePower(event);
 
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.TURN_GUN_RIGHT, mFirePriority + 1,
-						degree));
-				
-				double bulletPower = Math.min(400 / event.getDistance(), 3);
+						mDegree));
 
 				if (mRobot.getGunHeat() == 0
 						&& Math.abs(mRobot.getGunTurnRemaining()) < 10) {
 
-					mCoordinator
-							.addAction(new BThreadAction(
-									BThreadActionType.FIRE, mFirePriority,
-									bulletPower));
+					mCoordinator.addAction(new BThreadAction(
+							BThreadActionType.FIRE, mFirePriority, mFirePower));
 				}
 			}
 
 			else
 				mLock.unlock();
 		}
+	}
+
+	protected void calcDegreeAndFirePower(ScannedRobotEvent event) {
+
+		mFirePower = Math.min(500 / event.getDistance(), 3);
+
+		double bulletSpeed = 20 - mFirePower * 3;
+
+		long time = (long) (mEnemy.getDistance() / bulletSpeed);
+
+		if (mEnemy.none() || event.getDistance() < mEnemy.getDistance() - 70
+				|| event.getName().equals(mEnemy.getName())) {
+
+			mEnemy.update(event, mRobot);
+		}
+
+		double futureX = mEnemy.getFutureX(time);
+		double futureY = mEnemy.getFutureY(time);
+		double absDeg = absoluteBearing(mRobot.getX(), mRobot.getY(), futureX,
+				futureY);
+
+		mDegree = normalizeBearing(absDeg - mRobot.getGunHeading());
+	}
+
+	double normalizeBearing(double angle) {
+
+		while (angle > 180)
+			angle -= 360;
+
+		while (angle < -180)
+			angle += 360;
+
+		return angle;
+	}
+
+	double absoluteBearing(double x1, double y1, double x2, double y2) {
+
+		double xo = x2 - x1;
+		double yo = y2 - y1;
+		double hyp = Point2D.distance(x1, y1, x2, y2);
+		double arcSin = Math.toDegrees(Math.asin(xo / hyp));
+		double bearing = 0;
+
+		if (xo > 0 && yo > 0)
+			bearing = arcSin;
+
+		else if (xo < 0 && yo > 0)
+			bearing = 360 + arcSin;
+
+		else if (xo > 0 && yo < 0)
+			bearing = 180 - arcSin;
+
+		else if (xo < 0 && yo < 0)
+			bearing = 180 - arcSin;
+
+		return bearing;
 	}
 
 	@Override

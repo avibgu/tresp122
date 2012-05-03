@@ -9,7 +9,7 @@ public class AdvancedEnemyBot extends EnemyBot {
 	private double y;
 
 	public AdvancedEnemyBot() {
-		// TODO Auto-generated constructor stub
+		reset();
 	}
 
 	@Override
