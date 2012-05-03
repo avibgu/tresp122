@@ -35,7 +35,7 @@ public class FightBThread extends BThread {
 		mDegree = 0.0;
 	}
 
-	public void decideWhatActionToPerform() {
+	public void decideWhichActionToPerform() {
 
 		if (mLock.tryLock()) {
 

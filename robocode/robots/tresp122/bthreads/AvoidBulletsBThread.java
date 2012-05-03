@@ -37,7 +37,7 @@ public class AvoidBulletsBThread extends BThread {
 	}
 
 	@Override
-	public void decideWhatActionToPerform() {
+	public void decideWhichActionToPerform() {
 
 		if (mLock.tryLock()) {
 

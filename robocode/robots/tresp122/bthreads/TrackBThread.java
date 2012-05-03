@@ -25,7 +25,7 @@ public class TrackBThread extends BThread {
 	}
 
 	@Override
-	public void decideWhatActionToPerform() {
+	public void decideWhichActionToPerform() {
 
 		if (mLock.tryLock()) {
 

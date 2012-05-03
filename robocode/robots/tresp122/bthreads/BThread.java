@@ -27,7 +27,7 @@ public abstract class BThread implements Runnable {
 		
 		while(mDontStop){
 			
-			decideWhatActionToPerform();
+			decideWhichActionToPerform();
 			
 			try {
 				Thread.sleep(200);
@@ -42,7 +42,7 @@ public abstract class BThread implements Runnable {
 		mDontStop = false;
 	}
 	
-	public abstract void decideWhatActionToPerform();
+	public abstract void decideWhichActionToPerform();
 
 	public abstract void notifyAboutEvent(Event pEvent);
 }

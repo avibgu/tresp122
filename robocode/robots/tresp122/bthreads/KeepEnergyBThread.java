@@ -10,7 +10,7 @@ public class KeepEnergyBThread extends BThread {
 		super(pRobot);
 	}
 
-	public void decideWhatActionToPerform() {
+	public void decideWhichActionToPerform() {
 
 		// TODO: ..
 		

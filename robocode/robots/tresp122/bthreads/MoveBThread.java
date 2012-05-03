@@ -13,7 +13,7 @@ public class MoveBThread extends BThread {
 	}
 
 	@Override
-	public void decideWhatActionToPerform() {
+	public void decideWhichActionToPerform() {
 
 		if (Math.random() > 0.5)
 			mCoordinator.addAction(new BThreadAction(
