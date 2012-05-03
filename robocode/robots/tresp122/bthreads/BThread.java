@@ -30,7 +30,7 @@ public abstract class BThread implements Runnable {
 			decideWhatActionToPerform();
 			
 			try {
-				Thread.sleep(100);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
