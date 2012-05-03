@@ -171,7 +171,6 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		//TODO: clean the queue...
 	}
-
 	
 	// Events from the Battlefield:
 	
