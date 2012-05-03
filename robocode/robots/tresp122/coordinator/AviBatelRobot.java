@@ -34,6 +34,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	protected Set<BThread> 					mOnHitWall;
 	protected Set<BThread> 					mOnHitRobot;
 	
+	protected Set<Coordinator>				mCoordinators;
+	
 	public AviBatelRobot() {
 		
 		dontStop = true;
@@ -46,8 +48,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		initializeMailingLists();
 		
-		new Thread(new Level1Coordinator(this, mBThreadsController)).start();
-		new Thread(new Level0Coordinator(this, mBThreadsController)).start();
+		initializeCoordinators();
 	}
 
 	private void initializeMailingLists() {
@@ -68,6 +69,17 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mOnHitByBullet.add(mBThreadsController.getTrackBThread());
 		mOnScannedRobot.add(mBThreadsController.getTrackBThread());
 		mOnHitRobot.add(mBThreadsController.getTrackBThread());
+	}
+
+	public void initializeCoordinators() {
+		
+		mCoordinators = new HashSet<Coordinator>();
+		
+		mCoordinators.add(new Level1Coordinator(this, mBThreadsController));
+		mCoordinators.add(new Level0Coordinator(this, mBThreadsController));
+		
+		for (Coordinator coordinator : mCoordinators)
+			new Thread(coordinator).start();
 	}
 
 	public void run() {
@@ -225,5 +237,10 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 
 		new Thread(new NotifierThread(mBThreadsController.getAllBThreads(),
 				event)).start();
+		
+//		new Thread(new NotifierThread(mCoordinators, event)).start();
+		
+		for (Coordinator coordinator : mCoordinators)
+			coordinator.stop();
 	}
 }
