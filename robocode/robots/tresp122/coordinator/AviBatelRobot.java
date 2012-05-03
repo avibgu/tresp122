@@ -39,7 +39,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 	protected KeepEnergyBThread			mKeepEnergyBThread;
 	protected TrackBThread				mTrackBThread;
 	
-	protected Set<BThread> mAllThreads;
+	protected Set<BThread> mAllBThreads;
 	protected Set<BThread> mOnScannedRobot;
 	protected Set<BThread> mOnHitByBullet;
 	protected Set<BThread> mOnHitWall;
@@ -53,6 +53,24 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		mActions = new PriorityQueue<BThreadAction>(20, new ActionsComparator());
 		
+		initializeMailingLists();
+		initializeTheBThreadsOfThisLevel();
+		
+		new Thread(new Level1Coordinator(this, mAllBThreads)).start();
+	}
+
+	private void initializeMailingLists() {
+		
+		mAllBThreads = new HashSet<BThread>();
+		mOnScannedRobot = new HashSet<BThread>();		
+		mOnHitByBullet = new HashSet<BThread>();
+		mOnHitWall = new HashSet<BThread>();
+		mOnHitRobot = new HashSet<BThread>();
+	}
+
+	@Override
+	public void initializeTheBThreadsOfThisLevel() {
+		
 		mMoveBThread = new MoveBThread(this);
 		mFightBThread = new FightBThread(this);
 		mAvoidBulletsBThread = new AvoidBulletsBThread(this);
@@ -60,28 +78,22 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mKeepEnergyBThread = new KeepEnergyBThread(this);
 		mTrackBThread = new TrackBThread(this);
 		
-		mAllThreads = new HashSet<BThread>();
-		mOnScannedRobot = new HashSet<BThread>();		
-		mOnHitByBullet = new HashSet<BThread>();
-		mOnHitWall = new HashSet<BThread>();
-		mOnHitRobot = new HashSet<BThread>();
+		mAllBThreads.add(mMoveBThread);		
 		
-		mAllThreads.add(mMoveBThread);		
-		
-		mAllThreads.add(mFightBThread);
+		mAllBThreads.add(mFightBThread);
 		mOnScannedRobot.add(mFightBThread);
 		
-		mAllThreads.add(mAvoidBulletsBThread);
+		mAllBThreads.add(mAvoidBulletsBThread);
 		mOnScannedRobot.add(mAvoidBulletsBThread);
 		mOnHitByBullet.add(mAvoidBulletsBThread);
 		
-		mAllThreads.add(mAvoidCollisionsBThread);
+		mAllBThreads.add(mAvoidCollisionsBThread);
 		mOnHitWall.add(mAvoidCollisionsBThread);
 		mOnHitRobot.add(mAvoidCollisionsBThread);
 		
-		mAllThreads.add(mKeepEnergyBThread);
+		mAllBThreads.add(mKeepEnergyBThread);
 		
-		mAllThreads.add(mTrackBThread);
+		mAllBThreads.add(mTrackBThread);
 		mOnHitByBullet.add(mTrackBThread);
 		mOnScannedRobot.add(mTrackBThread);
 		mOnHitRobot.add(mTrackBThread);
@@ -97,17 +109,23 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		setTurnRadarLeft(Double.MAX_VALUE);
 
+		startBThreads();
+	
+		while(dontStop){
+			
+			decideWhatToDo();
+		}
+	}
+
+	@Override
+	public void startBThreads() {
+		
 		new Thread(mMoveBThread).start();
 		new Thread(mFightBThread).start();
 		new Thread(mAvoidBulletsBThread).start();
 		new Thread(mAvoidCollisionsBThread).start();
 		new Thread(mKeepEnergyBThread).start();
 		new Thread(mTrackBThread).start();
-	
-		while(dontStop){
-			
-			decideWhatToDo();
-		}
 	}
 
 	@Override
@@ -117,48 +135,48 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		if(!mActions.isEmpty()){
 
-			BThreadAction event = mActions.poll();
+			BThreadAction action = mActions.poll();
 			
-			removeSimilarActions(event.getType());
+			removeSimilarActions(action.getType());
 			
 			mLock.unlock();
 			
-			switch (event.getType()) {
+			switch (action.getType()) {
 				
 				case FIRE:
-					setFire(event.getValue());
+					setFire(action.getValue());
 					break;
 					
 				case AHEAD:
-					setAhead(event.getValue());
+					setAhead(action.getValue());
 					break;
 					
 				case BACK:
-					setBack(event.getValue());
+					setBack(action.getValue());
 					break;
 					
 				case TURN_LEFT:
-					setTurnLeft(event.getValue());
+					setTurnLeft(action.getValue());
 					break;
 					
 				case TURN_RIGHT:
-					setTurnRight(event.getValue());
+					setTurnRight(action.getValue());
 					break;
 					
 				case TURN_GUN_LEFT:
-					setTurnGunLeft(event.getValue());
+					setTurnGunLeft(action.getValue());
 					break;
 					
 				case TURN_GUN_RIGHT:
-					setTurnGunRight(event.getValue());
+					setTurnGunRight(action.getValue());
 					break;
 					
 				case TURN_RADAR_LEFT:
-					setTurnRadarLeft(event.getValue());
+					setTurnRadarLeft(action.getValue());
 					break;
 					
 				case TURN_RADAR_RIGHT:
-					setTurnRadarRight(event.getValue());
+					setTurnRadarRight(action.getValue());
 					break;
 			}
 
@@ -247,6 +265,6 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		setStop();
 		clearAllEvents();
 		
-		new Thread(new NotifierThread(mAllThreads, event)).start();
+		new Thread(new NotifierThread(mAllBThreads, event)).start();
 	}
 }

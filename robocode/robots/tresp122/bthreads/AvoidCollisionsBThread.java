@@ -1,8 +1,5 @@
 package tresp122.bthreads;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import robocode.Event;
 import robocode.HitRobotEvent;
 import robocode.HitWallEvent;
@@ -12,15 +9,15 @@ import tresp122.coordinator.AviBatelRobot;
 
 public class AvoidCollisionsBThread extends BThread {
 
-	protected Queue<HitWallEvent> mHitWall;
-	protected Queue<HitRobotEvent> mHitRobot;
+	protected HitWallEvent mHitWall;
+	protected HitRobotEvent mHitRobot;
 
 	public AvoidCollisionsBThread(AviBatelRobot pRobot) {
 
 		super(pRobot);
 
-		mHitWall= new LinkedList<HitWallEvent>();
-		mHitRobot = new LinkedList<HitRobotEvent>();
+		mHitWall= null;
+		mHitRobot = null;
 		
 		mPriority = 50;
 	}
@@ -30,11 +27,11 @@ public class AvoidCollisionsBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
-			if (!mHitWall.isEmpty()) {
+			if (null != mHitWall) {
+
+				double degree = mHitWall.getBearing() - 100;
 				
-				//TODO: test it..
-				
-				double degree = mHitWall.poll().getBearing() - 100;
+				mHitWall = null;
 				
 				mLock.unlock();
 
@@ -42,11 +39,13 @@ public class AvoidCollisionsBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(BThreadActionType.AHEAD, mPriority, 150));
 			}
 			
-			else if (!mHitRobot.isEmpty()) {
+			else if (null != mHitRobot) {
 				
 				//TODO: test it..
 				
-				double degree = mRobot.getHeading() - mRobot.getGunHeading() + mHitRobot.poll().getBearing();
+				double degree = mRobot.getHeading() - mRobot.getGunHeading() + mHitRobot.getBearing();
+				
+				mHitRobot = null;
 				
 				mLock.unlock();
 
@@ -66,7 +65,7 @@ public class AvoidCollisionsBThread extends BThread {
 
 			mLock.lock();
 
-			mHitWall.add((HitWallEvent) pEvent);
+			mHitWall = (HitWallEvent) pEvent;
 
 			mLock.unlock();
 		}
@@ -75,7 +74,7 @@ public class AvoidCollisionsBThread extends BThread {
 
 			mLock.lock();
 
-			mHitRobot.add((HitRobotEvent) pEvent);
+			mHitRobot = (HitRobotEvent) pEvent;
 
 			mLock.unlock();
 		}
