@@ -11,18 +11,18 @@ import tresp122.coordinator.AviBatelRobot;
 
 public class TrackBThread extends BThread {
 
-	protected Queue<HitByBulletEvent>	mHitByBullet;
-	protected Queue<ScannedRobotEvent>	mScannedRobots;
-	protected Queue<HitRobotEvent>		mHitRobot;
+	protected Queue<HitByBulletEvent> mHitByBullet;
+	protected Queue<ScannedRobotEvent> mScannedRobots;
+	protected Queue<HitRobotEvent> mHitRobot;
 
-	public TrackBThread(AviBatelRobot pRobot) { 
-		
+	public TrackBThread(AviBatelRobot pRobot) {
+
 		super(pRobot);
-		
+
 		mHitByBullet = new LinkedList<HitByBulletEvent>();
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
 		mHitRobot = new LinkedList<HitRobotEvent>();
-		
+
 		mPriority = 7;
 	}
 
@@ -35,29 +35,44 @@ public class TrackBThread extends BThread {
 
 				HitByBulletEvent event = mHitByBullet.poll();
 
+				mLock.unlock();
+
 				// TODO: ..
 			}
+		}
 
-			
+		else
+			mLock.unlock();
+
+		if (mLock.tryLock()) {
+
 			if (!mScannedRobots.isEmpty()) {
 
 				ScannedRobotEvent event = mScannedRobots.poll();
 
+				mLock.unlock();
+
 				// TODO: ..
 			}
+		}
 
-			
+		else
+			mLock.unlock();
+
+		if (mLock.tryLock()) {
+
 			if (!mHitRobot.isEmpty()) {
 
 				HitRobotEvent event = mHitRobot.poll();
 
+				mLock.unlock();
 
 				// TODO: ..
 			}
-			
-			mLock.unlock();
 		}
 
+		else
+			mLock.unlock();
 	}
 
 	@Override
@@ -72,7 +87,7 @@ public class TrackBThread extends BThread {
 			mLock.unlock();
 
 		}
-		
+
 		if (pEvent instanceof ScannedRobotEvent) {
 
 			mLock.lock();
@@ -82,7 +97,7 @@ public class TrackBThread extends BThread {
 			mLock.unlock();
 
 		}
-		
+
 		if (pEvent instanceof HitRobotEvent) {
 
 			mLock.lock();

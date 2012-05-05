@@ -48,7 +48,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		initializeMailingLists();
 		
-		initializeCoordinators();
+//		initializeCoordinators();
 	}
 
 	private void initializeMailingLists() {
