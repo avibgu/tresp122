@@ -68,6 +68,10 @@ public class KillBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_FIRE_POWER, mPriority,
 						0.5));
+				
+				if (mRobot.getEnergy() > 50)
+					super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.WE_ARE_GOING_TO_WIN));
 			}
 
 			else

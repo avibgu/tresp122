@@ -43,6 +43,9 @@ public class StayAliveBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
 						10));
+				
+				super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.WE_ARE_GOING_TO_DIE));
 			}
 
 			else
