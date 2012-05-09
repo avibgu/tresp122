@@ -65,10 +65,10 @@ public class TrackBThread extends BThread {
 					}
 				}
 			}
+			
+			else
+				mLock.unlock();
 		}
-
-		else
-			mLock.unlock();
 
 		if (mLock.tryLock()) {
 
@@ -82,10 +82,10 @@ public class TrackBThread extends BThread {
 					super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.ENEMY_IS_WEAK));
 			}
+			
+			else
+				mLock.unlock();
 		}
-
-		else
-			mLock.unlock();
 
 		if (mLock.tryLock()) {
 
@@ -99,11 +99,11 @@ public class TrackBThread extends BThread {
 					super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.ENEMY_IS_WEAK));
 			}
+			
+			else
+				mLock.unlock();
 		}
 
-		else
-			mLock.unlock();
-		
 		if (mLock.tryLock()) {
 
 			if (!mBulletHitBullets.isEmpty()) {
@@ -120,10 +120,10 @@ public class TrackBThread extends BThread {
 					super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.WE_MADE_DAMAGE_TO_ENEMY));
 			}
+			
+			else
+				mLock.unlock();
 		}
-
-		else
-			mLock.unlock();
 	}
 
 	@Override
