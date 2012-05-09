@@ -7,7 +7,7 @@ public enum BThreadEventType {
 	WE_MADE_DAMAGE_TO_ENEMY,
 	
 	ENEMY_IS_WEAK,
-	ENEMY_IS_STRONG,
+//	ENEMY_IS_STRONG,
 	
 	WE_ARE_WEAK,
 	WE_ARE_STRONG,

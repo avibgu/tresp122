@@ -32,6 +32,16 @@ public class Level1Coordinator extends LeveliCoordinator {
 					(int) action.getValue());
 			break;
 
+		case INCREASE_FIRE_POWER:
+			mBThreadsController.getFightBThread().increaseFirePower(
+					(int) action.getValue());
+			break;
+
+		case DECREASE_FIRE_POWER:
+			mBThreadsController.getFightBThread().decreaseFirePower(
+					(int) action.getValue());
+			break;
+
 		case DECREASE_AVOID_BULLETS_PRIORITY:
 			mBThreadsController.getAvoidBulletsBThread().decreasePriority(
 					(int) action.getValue());
@@ -49,26 +59,6 @@ public class Level1Coordinator extends LeveliCoordinator {
 
 		case INCREASE_AVOID_COLLISIONS_PRIORITY:
 			mBThreadsController.getAvoidCollisionsBThread().increasePriority(
-					(int) action.getValue());
-			break;
-
-		case DECREASE_KEEP_ENERGY_PRIORITY:
-			mBThreadsController.getKeepEnergyBThread().decreasePriority(
-					(int) action.getValue());
-			break;
-
-		case INCREASE_KEEP_ENERGY_PRIORITY:
-			mBThreadsController.getKeepEnergyBThread().increasePriority(
-					(int) action.getValue());
-			break;
-
-		case DECREASE_TRACK_PRIORITY:
-			mBThreadsController.getTrackBThread().decreasePriority(
-					(int) action.getValue());
-			break;
-
-		case INCREASE_TRACK_PRIORITY:
-			mBThreadsController.getTrackBThread().increasePriority(
 					(int) action.getValue());
 			break;
 		}

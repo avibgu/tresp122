@@ -3,7 +3,9 @@ package tresp122.bthreads;
 import java.util.HashSet;
 import java.util.Set;
 
+import robocode.Event;
 import tresp122.coordinator.AviBatelRobot;
+import tresp122.utilities.NotifierThread;
 
 public class BThreadsController {
 
@@ -46,14 +48,19 @@ public class BThreadsController {
 		mAllBThreads.add(mStayAliveBThread);
 		
 		mSuccessBThread = new SuccessBThread(pRobot, getAllBThreads());
+		
 		mAllBThreads.add(mSuccessBThread);
 		
-		startBThreads();
+//		startBThreads();
 	}
 
-	private void startBThreads() {
+	public void startBThreads() {
 		for (BThread bThread : mAllBThreads)
 			new Thread(bThread).start();
+	}
+	
+	public void stopBThreads(Event event) {
+		new Thread(new NotifierThread(mAllBThreads, event)).start();
 	}
 	
 	public MoveBThread getMoveBThread() {

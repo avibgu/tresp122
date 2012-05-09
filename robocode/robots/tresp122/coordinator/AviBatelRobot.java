@@ -48,7 +48,7 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		
 		initializeMailingLists();
 		
-//		initializeCoordinators();
+		initializeCoordinators();
 	}
 
 	private void initializeMailingLists() {
@@ -91,6 +91,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		setAdjustGunForRobotTurn(true);
 		
 		setTurnRadarLeft(Double.MAX_VALUE);
+		
+		mBThreadsController.startBThreads();
 		
 		while(dontStop){
 			
@@ -235,12 +237,8 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		setStop();
 		clearAllEvents();
 
-		new Thread(new NotifierThread(mBThreadsController.getAllBThreads(),
-				event)).start();
+		mBThreadsController.stopBThreads(event);
 		
-//		new Thread(new NotifierThread(mCoordinators, event)).start();
-		
-		for (Coordinator coordinator : mCoordinators)
-			coordinator.stop();
+		new Thread(new StopperThread(mCoordinators)).start();
 	}
 }
