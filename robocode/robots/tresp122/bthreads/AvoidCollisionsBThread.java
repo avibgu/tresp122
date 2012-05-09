@@ -41,8 +41,6 @@ public class AvoidCollisionsBThread extends BThread {
 			
 			else if (null != mHitRobot) {
 				
-				//TODO: test it..
-				
 				double degree = mRobot.getHeading() - mRobot.getGunHeading() + mHitRobot.getBearing();
 				
 				mHitRobot = null;

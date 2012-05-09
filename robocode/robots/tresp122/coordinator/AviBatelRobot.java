@@ -163,8 +163,6 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 			mLock.unlock();
 			doNothing();
 		}
-		
-		//TODO: clean the queue...
 	}
 	
 	// Events from the Battlefield:

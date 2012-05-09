@@ -41,14 +41,14 @@ public class KillBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_FIGHT_PRIORITY, mPriority,
 						10));
-				
+
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.DECREASE_AVOID_BULLETS_PRIORITY, mPriority,
-						10));
-				
+						BThreadActionType.DECREASE_AVOID_BULLETS_PRIORITY,
+						mPriority, 10));
+
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.DECREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
-						10));
+						BThreadActionType.DECREASE_AVOID_COLLISIONS_PRIORITY,
+						mPriority, 10));
 			}
 
 			else
@@ -64,14 +64,13 @@ public class KillBThread extends BThread {
 				mLock.unlock();
 
 				// TODO: maybe need to check the current fire power..
-				
+
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.INCREASE_FIRE_POWER, mPriority,
-						0.5));
-				
+						BThreadActionType.INCREASE_FIRE_POWER, mPriority, 1));
+
 				if (mRobot.getEnergy() > 50)
 					super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.WE_ARE_GOING_TO_WIN));
+							BThreadEventType.WE_ARE_GOING_TO_WIN));
 			}
 
 			else

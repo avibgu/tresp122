@@ -67,8 +67,7 @@ public class FightBThread extends BThread {
 
 	protected void calcDegreeAndFirePower(ScannedRobotEvent event) {
 
-		//TODO ...
-		mFirePower = Math.min(500 / event.getDistance(), 3);
+//		mFirePower = Math.min(500 / event.getDistance(), 3);
 
 		double bulletSpeed = 20 - mFirePower * 3;
 
@@ -135,13 +134,11 @@ public class FightBThread extends BThread {
 		}
 	}
 
-	public void increaseFirePower(int pValue) {
-		// TODO Auto-generated method stub
-		
+	public void increaseFirePower() {
+		mFirePower = 3;
 	}
 
-	public void decreaseFirePower(int pValue) {
-		// TODO Auto-generated method stub
-		
+	public void decreaseFirePower() {
+		mFirePower = 2;
 	}
 }

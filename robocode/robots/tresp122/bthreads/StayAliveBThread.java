@@ -16,11 +16,11 @@ public class StayAliveBThread extends BThread {
 
 	public StayAliveBThread(AviBatelRobot pRobot,
 			Set<BThread> pBThreadsToRegister) {
-		
+
 		super(pRobot, pBThreadsToRegister);
-		
+
 		mWeAreWeakEvent = null;
-		mWeAreUnderAttackEvent =null;
+		mWeAreUnderAttackEvent = null;
 	}
 
 	@Override
@@ -37,13 +37,16 @@ public class StayAliveBThread extends BThread {
 				// TODO: maybe need to check the current priority..
 
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY, mPriority,
-						10));
-				
+						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY,
+						mPriority, 10));
+
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
-						10));
-				
+						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY,
+						mPriority, 10));
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.DECREASE_FIRE_POWER, mPriority, 1));
+
 				super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.WE_ARE_GOING_TO_DIE));
 			}
@@ -51,7 +54,7 @@ public class StayAliveBThread extends BThread {
 			else
 				mLock.unlock();
 		}
-		
+
 		if (mLock.tryLock()) {
 
 			if (null != mWeAreUnderAttackEvent) {
@@ -63,12 +66,12 @@ public class StayAliveBThread extends BThread {
 				// TODO: maybe need to check the current priority..
 
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY, mPriority,
-						10));
-				
+						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY,
+						mPriority, 10));
+
 				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
-						10));
+						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY,
+						mPriority, 10));
 			}
 
 			else

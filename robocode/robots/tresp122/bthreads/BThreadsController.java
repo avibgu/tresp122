@@ -50,8 +50,6 @@ public class BThreadsController {
 		mSuccessBThread = new SuccessBThread(pRobot, getAllBThreads());
 		
 		mAllBThreads.add(mSuccessBThread);
-		
-//		startBThreads();
 	}
 
 	public void startBThreads() {

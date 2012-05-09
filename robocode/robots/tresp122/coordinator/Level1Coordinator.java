@@ -33,13 +33,11 @@ public class Level1Coordinator extends LeveliCoordinator {
 			break;
 
 		case INCREASE_FIRE_POWER:
-			mBThreadsController.getFightBThread().increaseFirePower(
-					(int) action.getValue());
+			mBThreadsController.getFightBThread().increaseFirePower();
 			break;
 
 		case DECREASE_FIRE_POWER:
-			mBThreadsController.getFightBThread().decreaseFirePower(
-					(int) action.getValue());
+			mBThreadsController.getFightBThread().decreaseFirePower();
 			break;
 
 		case DECREASE_AVOID_BULLETS_PRIORITY:
