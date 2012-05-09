@@ -3,7 +3,6 @@ package tresp122.bthreads;
 import java.util.Set;
 
 import robocode.Event;
-import robocode.ScannedRobotEvent;
 
 import tresp122.action.BThreadAction;
 import tresp122.action.BThreadActionType;
@@ -13,17 +12,17 @@ import tresp122.event.BThreadEventType;
 
 public class KillBThread extends BThread {
 
-	private BThreadEvent mWeAreStrongEvents;
-	private BThreadEvent mEnemeyIsWeakEvents;
-	private BThreadEvent mWeMadeDamageToEnemyEvents;
+	private BThreadEvent mWeAreStrongEvent;
+	private BThreadEvent mEnemeyIsWeakEvent;
+	private BThreadEvent mWeMadeDamageToEnemyEvent;
 
 	public KillBThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
 
 		super(pRobot, pBThreadsToRegister);
 
-		mWeAreStrongEvents = null;
-		mEnemeyIsWeakEvents = null;
-		mWeMadeDamageToEnemyEvents = null;
+		mWeAreStrongEvent = null;
+		mEnemeyIsWeakEvent = null;
+		mWeMadeDamageToEnemyEvent = null;
 	}
 
 	@Override
@@ -31,9 +30,9 @@ public class KillBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
-			if (null != mWeAreStrongEvents) {
+			if (null != mWeAreStrongEvent) {
 
-				mWeAreStrongEvents = null;
+				mWeAreStrongEvent = null;
 
 				mLock.unlock();
 
@@ -41,6 +40,14 @@ public class KillBThread extends BThread {
 
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_FIGHT_PRIORITY, mPriority,
+						10));
+				
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.DECREASE_AVOID_BULLETS_PRIORITY, mPriority,
+						10));
+				
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.DECREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
 						10));
 			}
 
@@ -50,9 +57,9 @@ public class KillBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
-			if (null != mEnemeyIsWeakEvents) {
+			if (null != mEnemeyIsWeakEvent) {
 
-				mEnemeyIsWeakEvents = null;
+				mEnemeyIsWeakEvent = null;
 
 				mLock.unlock();
 
@@ -69,9 +76,9 @@ public class KillBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
-			if (null != mWeMadeDamageToEnemyEvents) {
+			if (null != mWeMadeDamageToEnemyEvent) {
 
-				mWeMadeDamageToEnemyEvents = null;
+				mWeMadeDamageToEnemyEvent = null;
 
 				mLock.unlock();
 
@@ -96,7 +103,7 @@ public class KillBThread extends BThread {
 
 				mLock.lock();
 
-				mWeAreStrongEvents = event;
+				mWeAreStrongEvent = event;
 
 				mLock.unlock();
 			}
@@ -105,7 +112,7 @@ public class KillBThread extends BThread {
 
 				mLock.lock();
 
-				mEnemeyIsWeakEvents = event;
+				mEnemeyIsWeakEvent = event;
 
 				mLock.unlock();
 			}
@@ -114,7 +121,7 @@ public class KillBThread extends BThread {
 
 				mLock.lock();
 
-				mWeMadeDamageToEnemyEvents = event;
+				mWeMadeDamageToEnemyEvent = event;
 
 				mLock.unlock();
 			}

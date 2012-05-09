@@ -3,25 +3,74 @@ package tresp122.bthreads;
 import java.util.Set;
 
 import robocode.Event;
+import tresp122.action.BThreadAction;
+import tresp122.action.BThreadActionType;
 import tresp122.coordinator.AviBatelRobot;
 import tresp122.event.BThreadEvent;
 import tresp122.event.BThreadEventType;
 
 public class StayAliveBThread extends BThread {
 
+	private BThreadEvent mWeAreWeakEvent;
+	private BThreadEvent mWeAreUnderAttackEvent;
+
 	public StayAliveBThread(AviBatelRobot pRobot,
 			Set<BThread> pBThreadsToRegister) {
+		
 		super(pRobot, pBThreadsToRegister);
+		
+		mWeAreWeakEvent = null;
+		mWeAreUnderAttackEvent =null;
 	}
 
 	@Override
 	public void decideWhichActionToPerform() {
-		// TODO Auto-generated method stub
 
-//		INCREASE_AVOID_BULLETS_PRIORITY,
-//		DECREASE_AVOID_BULLETS_PRIORITY,
-//		INCREASE_AVOID_COLLISIONS_PRIORITY,
-//		DECREASE_AVOID_COLLISIONS_PRIORITY,
+		if (mLock.tryLock()) {
+
+			if (null != mWeAreWeakEvent) {
+
+				mWeAreWeakEvent = null;
+
+				mLock.unlock();
+
+				// TODO: maybe need to check the current priority..
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY, mPriority,
+						10));
+				
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
+						10));
+			}
+
+			else
+				mLock.unlock();
+		}
+		
+		if (mLock.tryLock()) {
+
+			if (null != mWeAreUnderAttackEvent) {
+
+				mWeAreUnderAttackEvent = null;
+
+				mLock.unlock();
+
+				// TODO: maybe need to check the current priority..
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY, mPriority,
+						10));
+				
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.INCREASE_AVOID_COLLISIONS_PRIORITY, mPriority,
+						10));
+			}
+
+			else
+				mLock.unlock();
+		}
 	}
 
 	@Override
@@ -35,7 +84,7 @@ public class StayAliveBThread extends BThread {
 
 				mLock.lock();
 
-				// ...
+				mWeAreWeakEvent = event;
 
 				mLock.unlock();
 			}
@@ -44,7 +93,7 @@ public class StayAliveBThread extends BThread {
 
 				mLock.lock();
 
-				// ...
+				mWeAreUnderAttackEvent = event;
 
 				mLock.unlock();
 			}

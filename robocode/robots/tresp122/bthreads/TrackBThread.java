@@ -1,19 +1,27 @@
 package tresp122.bthreads;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import robocode.BulletHitBulletEvent;
 import robocode.Event;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
 import robocode.ScannedRobotEvent;
 import tresp122.coordinator.AviBatelRobot;
+import tresp122.event.BThreadEvent;
+import tresp122.event.BThreadEventType;
 
 public class TrackBThread extends BThread {
 
-	protected Queue<HitByBulletEvent> mHitByBullet;
-	protected Queue<ScannedRobotEvent> mScannedRobots;
-	protected Queue<HitRobotEvent> mHitRobot;
+	protected Queue<HitByBulletEvent>	mHitByBullet;
+	protected Queue<ScannedRobotEvent>	mScannedRobots;
+	protected Queue<HitRobotEvent>		mHitRobots;
+	protected Queue<BulletHitBulletEvent>	mBulletHitBullets;
+	
+	protected int mNumOfHitByBullet;
+	protected long mTime;
 
 	public TrackBThread(AviBatelRobot pRobot) {
 
@@ -21,9 +29,13 @@ public class TrackBThread extends BThread {
 
 		mHitByBullet = new LinkedList<HitByBulletEvent>();
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
-		mHitRobot = new LinkedList<HitRobotEvent>();
-
+		mHitRobots = new LinkedList<HitRobotEvent>();
+		mBulletHitBullets = new LinkedList<BulletHitBulletEvent>();
+		
 		mPriority = 7;
+		
+		mNumOfHitByBullet = 0;
+		mTime = new Date().getTime();
 	}
 
 	@Override
@@ -36,8 +48,22 @@ public class TrackBThread extends BThread {
 				HitByBulletEvent event = mHitByBullet.poll();
 
 				mLock.unlock();
-
-				// TODO: ..
+				
+				mNumOfHitByBullet++;
+				
+				if (mNumOfHitByBullet > 2){
+					
+					long time = event.getTime() - mTime;
+					
+					if (mNumOfHitByBullet / (time/1000) > 1){
+						
+						super.notifyToMailingList(new BThreadEvent(
+								BThreadEventType.WE_ARE_UNDER_ATTACK));
+						
+						mTime = new Date().getTime();
+						mNumOfHitByBullet = 0;
+					}
+				}
 			}
 		}
 
@@ -52,7 +78,9 @@ public class TrackBThread extends BThread {
 
 				mLock.unlock();
 
-				// TODO: ..
+				if (event.getEnergy() < 30)
+					super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.ENEMY_IS_WEAK));
 			}
 		}
 
@@ -61,13 +89,36 @@ public class TrackBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
-			if (!mHitRobot.isEmpty()) {
+			if (!mHitRobots.isEmpty()) {
 
-				HitRobotEvent event = mHitRobot.poll();
+				HitRobotEvent event = mHitRobots.poll();
 
 				mLock.unlock();
 
-				// TODO: ..
+				if (event.getEnergy() < 30)
+					super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.ENEMY_IS_WEAK));
+			}
+		}
+
+		else
+			mLock.unlock();
+		
+		if (mLock.tryLock()) {
+
+			if (!mBulletHitBullets.isEmpty()) {
+
+				BulletHitBulletEvent event = mBulletHitBullets.poll();
+
+				mLock.unlock();
+				
+				double bulletPower = event.getHitBullet().getPower();
+				
+				double damage = 4 * bulletPower + 2 * Math.max(bulletPower - 1, 0);
+				
+				if (damage > 6)
+					super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.WE_MADE_DAMAGE_TO_ENEMY));
 			}
 		}
 
@@ -88,7 +139,7 @@ public class TrackBThread extends BThread {
 
 		}
 
-		if (pEvent instanceof ScannedRobotEvent) {
+		else if (pEvent instanceof ScannedRobotEvent) {
 
 			mLock.lock();
 
@@ -98,11 +149,21 @@ public class TrackBThread extends BThread {
 
 		}
 
-		if (pEvent instanceof HitRobotEvent) {
+		else if (pEvent instanceof HitRobotEvent) {
 
 			mLock.lock();
 
-			mHitRobot.add((HitRobotEvent) pEvent);
+			mHitRobots.add((HitRobotEvent) pEvent);
+
+			mLock.unlock();
+
+		}
+		
+		if (pEvent instanceof BulletHitBulletEvent) {
+
+			mLock.lock();
+
+			mBulletHitBullets.add((BulletHitBulletEvent) pEvent);
 
 			mLock.unlock();
 
