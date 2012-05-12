@@ -1,4 +1,4 @@
-package tresp122.utilities;
+package tresp122.simple;
 
 import java.awt.Color;
 import java.util.concurrent.locks.Lock;
