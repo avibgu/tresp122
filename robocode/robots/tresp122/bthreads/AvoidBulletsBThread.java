@@ -16,7 +16,7 @@ public class AvoidBulletsBThread extends BThread {
 	protected HitByBulletEvent mHitByBullet;
 	protected ScannedRobotEvent mScannedRobots;
 
-	protected double mPreviousEnergy;
+	protected double mPreviousEnemyEnergy;
 	protected int mMovementDirection;
 
 	public AvoidBulletsBThread(AviBatelRobot pRobot) {
@@ -28,7 +28,7 @@ public class AvoidBulletsBThread extends BThread {
 
 		mPriority = 20;
 
-		mPreviousEnergy = 100;
+		mPreviousEnemyEnergy = 100;
 		mMovementDirection = 1;
 	}
 
@@ -37,31 +37,30 @@ public class AvoidBulletsBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
-//			if (null != mHitByBullet) {
-//
-//				HitByBulletEvent event = mHitByBullet;
-//
-//				mHitByBullet = null;
-//
-//				mLock.unlock();
-//
-//				if (Math.random() > 0.5)
-//
-//					mCoordinator.addAction(new BThreadAction(
-//							BThreadActionType.TURN_RIGHT, 20, event
-//									.getBearing() + 45));
-//
-//				else
-//					mCoordinator.addAction(new BThreadAction(
-//							BThreadActionType.TURN_RIGHT, 20, event
-//									.getBearing() - 45));
-//
-//				mCoordinator.addAction(new BThreadAction(
-//						BThreadActionType.BACK, 19, 200));
-//			}
-//
-//			else
-				if (null != mScannedRobots) {
+			if (null != mHitByBullet) {
+
+				HitByBulletEvent event = mHitByBullet;
+
+				mHitByBullet = null;
+
+				mLock.unlock();
+
+				if (Math.random() > 0.5)
+
+					mCoordinator.addAction(new BThreadAction(
+							BThreadActionType.TURN_RIGHT, 20, event
+									.getBearing() + 45));
+
+				else
+					mCoordinator.addAction(new BThreadAction(
+							BThreadActionType.TURN_RIGHT, 20, event
+									.getBearing() - 45));
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.BACK, 19, 200));
+			}
+
+			else if (null != mScannedRobots) {
 
 				ScannedRobotEvent event = mScannedRobots;
 
@@ -76,12 +75,13 @@ public class AvoidBulletsBThread extends BThread {
 								.getBearing() + 90 - 30 * mMovementDirection));
 
 				// If the bot has small energy drop, assume it fired
-				double changeInEnergy = mPreviousEnergy - event.getEnergy();
+				double changeInEnergy = mPreviousEnemyEnergy
+						- event.getEnergy();
 
 				if (changeInEnergy > 0 && changeInEnergy <= 3) {
 
 					// Dodge!
-					mMovementDirection = -mMovementDirection;
+					// mMovementDirection = -mMovementDirection;
 
 					double ahead = (event.getDistance() / 4 + 25)
 							* mMovementDirection;
@@ -91,7 +91,7 @@ public class AvoidBulletsBThread extends BThread {
 				}
 
 				// Track the energy level
-				mPreviousEnergy = event.getEnergy();
+				mPreviousEnemyEnergy = event.getEnergy();
 			}
 
 			else

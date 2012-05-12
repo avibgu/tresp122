@@ -19,6 +19,8 @@ public class StayAliveBThread extends BThread {
 
 		super(pRobot, pBThreadsToRegister);
 
+		mPriority = 10;
+		
 		mWeAreWeakEvent = null;
 		mWeAreUnderAttackEvent = null;
 	}

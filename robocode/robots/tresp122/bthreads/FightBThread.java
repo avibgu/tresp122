@@ -30,7 +30,7 @@ public class FightBThread extends BThread {
 		mPriority = 10;
 
 		mEnemy = new AdvancedEnemyBot();
-		mFirePower = 0.0;
+		mFirePower = 3.0;
 		mDegree = 0.0;
 	}
 

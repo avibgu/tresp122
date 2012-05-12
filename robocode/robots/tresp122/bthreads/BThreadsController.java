@@ -34,12 +34,12 @@ public class BThreadsController {
 		mKeepEnergyBThread = new KeepEnergyBThread(pRobot);
 		mTrackBThread = new TrackBThread(pRobot);
 	
-		mAllBThreads.add(mMoveBThread);
+//		mAllBThreads.add(mMoveBThread);
 		mAllBThreads.add(mFightBThread);
 		mAllBThreads.add(mAvoidBulletsBThread);
 		mAllBThreads.add(mAvoidCollisionsBThread);
-		mAllBThreads.add(mKeepEnergyBThread);
-		mAllBThreads.add(mTrackBThread);
+//		mAllBThreads.add(mKeepEnergyBThread);
+//		mAllBThreads.add(mTrackBThread);
 		
 		mKillBThread = new KillBThread(pRobot, getAllBThreads());
 		mStayAliveBThread = new StayAliveBThread(pRobot, getAllBThreads());

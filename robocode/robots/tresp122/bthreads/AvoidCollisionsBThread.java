@@ -19,7 +19,7 @@ public class AvoidCollisionsBThread extends BThread {
 		mHitWall= null;
 		mHitRobot = null;
 		
-		mPriority = 50;
+		mPriority = 30;
 	}
 
 	@Override
@@ -29,7 +29,8 @@ public class AvoidCollisionsBThread extends BThread {
 
 			if (null != mHitWall) {
 
-				double degree = mHitWall.getBearing() - 100;
+//				double degree = mHitWall.getBearing() - 100;
+				double degree = mHitWall.getBearing() - 180;
 				
 				mHitWall = null;
 				
@@ -41,8 +42,9 @@ public class AvoidCollisionsBThread extends BThread {
 			
 			else if (null != mHitRobot) {
 				
-				double degree = mRobot.getHeading() - mRobot.getGunHeading() + mHitRobot.getBearing();
-				
+//				double degree = mRobot.getHeading() - mRobot.getGunHeading() + mHitRobot.getBearing();
+				double degree = mHitRobot.getBearing() - 180;
+				 
 				mHitRobot = null;
 				
 				mLock.unlock();

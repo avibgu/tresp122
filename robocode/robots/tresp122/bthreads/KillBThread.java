@@ -20,6 +20,8 @@ public class KillBThread extends BThread {
 
 		super(pRobot, pBThreadsToRegister);
 
+		mPriority = 20;
+		
 		mWeAreStrongEvent = null;
 		mEnemeyIsWeakEvent = null;
 		mWeMadeDamageToEnemyEvent = null;
