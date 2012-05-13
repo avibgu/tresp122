@@ -38,8 +38,6 @@ public class KillBThread extends BThread {
 
 				mLock.unlock();
 
-				// TODO: maybe need to check the current priority..
-
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_FIGHT_PRIORITY, mPriority,
 						10));
@@ -64,8 +62,6 @@ public class KillBThread extends BThread {
 				mEnemeyIsWeakEvent = null;
 
 				mLock.unlock();
-
-				// TODO: maybe need to check the current fire power..
 
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_FIRE_POWER, mPriority, 1));

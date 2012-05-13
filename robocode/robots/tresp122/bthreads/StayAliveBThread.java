@@ -36,8 +36,6 @@ public class StayAliveBThread extends BThread {
 
 				mLock.unlock();
 
-				// TODO: maybe need to check the current priority..
-
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY,
 						mPriority, 10));
@@ -64,8 +62,6 @@ public class StayAliveBThread extends BThread {
 				mWeAreUnderAttackEvent = null;
 
 				mLock.unlock();
-
-				// TODO: maybe need to check the current priority..
 
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_AVOID_BULLETS_PRIORITY,

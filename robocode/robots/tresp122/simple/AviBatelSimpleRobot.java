@@ -10,8 +10,6 @@ import robocode.Robot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
-//API help : http://robocode.sourceforge.net/docs/robocode
-//			 http://robowiki.net/wiki/Robocode/Running_from_Eclipse
 
 public class AviBatelSimpleRobot extends Robot {
 
@@ -53,35 +51,7 @@ public class AviBatelSimpleRobot extends Robot {
 	
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		
-//		double x1 = getX();
-//		double y1 = getY();
-//		
-//		double x2 = event.getDistance() * Math.sin(event.getBearing());
-//		double y2 = event.getDistance() * Math.cos(event.getBearing());
-//		
-//		double x3;
-//		double y3;
-//		
-//		Bullet b = null; //TODO get bullet velocity
-//						 //TODO calc Vx and Vy
-//		
-//		if (event.getHeading() <= 90){ // x is getting bigger, y is getting smaller
-//			
-//			x3 = (x1 * event.getVelocity() - x2 * b.getVelocity()) / (event.getVelocity() - b.getVelocity());
-//			y3 = (y1 * event.getVelocity() - y2 * b.getVelocity()) / (event.getVelocity() - b.getVelocity());
-//		}
-//		else if (event.getHeading() <= 180){ // x is getting bigger, y is getting bigger
-//			
-//			x3 = (x1 * event.getVelocity() - x2 * b.getVelocity()) / (event.getVelocity() - b.getVelocity());
-//		}
-//		else if (event.getHeading() < 270){ // x is getting smaller, y is getting smaller
-//			
-//			x3 = (x1 * event.getVelocity() - x2 * b.getVelocity()) / (event.getVelocity() - b.getVelocity());
-//		}
-//		else // x is getting smaller, y is getting bigger
-//			x3 = (x1 * event.getVelocity() - x2 * b.getVelocity()) / (event.getVelocity() - b.getVelocity());
-//		
+
 		if (getGunHeat() == 0) {
 			
 			lock.lock();

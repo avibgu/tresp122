@@ -33,8 +33,6 @@ public class SuccessBThread extends BThread {
 
 				mLock.unlock();
 
-				// TODO: maybe need to check the current priority..
-
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_KILL_PRIORITY, mPriority,
 						10));
@@ -56,8 +54,6 @@ public class SuccessBThread extends BThread {
 
 				mLock.unlock();
 
-				// TODO: maybe need to check the current priority..
-				
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.DECREASE_KILL_PRIORITY, mPriority,
 						10));
