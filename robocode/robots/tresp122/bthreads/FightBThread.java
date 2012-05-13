@@ -71,13 +71,13 @@ public class FightBThread extends BThread {
 
 		double bulletSpeed = 20 - mFirePower * 3;
 
-		long time = (long) (mEnemy.getDistance() / bulletSpeed);
-
 		if (mEnemy.none() || event.getDistance() < mEnemy.getDistance() - 70
 				|| event.getName().equals(mEnemy.getName())) {
 
 			mEnemy.update(event, mRobot);
 		}
+		
+		long time = (long) (mEnemy.getDistance() / bulletSpeed);
 
 		double futureX = mEnemy.getFutureX(time);
 		double futureY = mEnemy.getFutureY(time);

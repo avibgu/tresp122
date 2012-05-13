@@ -1,6 +1,8 @@
-package tresp122.coordinator;
+package tresp122.utilities;
 
 import java.util.Set;
+
+import tresp122.coordinator.Coordinator;
 
 public class StopperThread implements Runnable {
 

@@ -7,6 +7,7 @@ import tresp122.action.BThreadActionType;
 import tresp122.bthreads.BThread;
 import tresp122.bthreads.BThreadsController;
 import tresp122.utilities.NotifierThread;
+import tresp122.utilities.StopperThread;
 
 import java.awt.Color;
 import java.util.HashSet;
