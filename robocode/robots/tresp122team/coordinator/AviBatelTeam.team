@@ -1,6 +1,0 @@
-#Robocode robot team
-#Thu May 17 00:23:13 IDT 2012
-team.members=tresp122.coordinator.AviBatelRobot*,tresp122.simple.AviBatelSimpleRobot*
-team.author.name=
-robocode.version=1.7.3.5
-team.description=.

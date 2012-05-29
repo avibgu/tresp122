@@ -10,6 +10,9 @@ import tresp122team.utilities.NotifierThread;
 import tresp122team.utilities.StopperThread;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -21,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * AviBatelRobot - a robot by (your name here)
  */
-public class AviBatelRobot extends AdvancedRobot implements Coordinator{
+public class AviBatelRobot extends TeamRobot implements Coordinator{
 	
 	protected Lock							mLock;
 	protected boolean						dontStop;
@@ -182,6 +185,12 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
+		
+		// TEAM
+		if (isTeammate(event.getName())) {
+			return;
+		}
+		
 		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
 	}
 
@@ -249,5 +258,13 @@ public class AviBatelRobot extends AdvancedRobot implements Coordinator{
 		mBThreadsController.stopBThreads(event);
 		
 		new Thread(new StopperThread(mCoordinators)).start();
+	}
+	
+//---------------------------- TEAM ---------------------------------
+	
+	@Override
+	public void onMessageReceived(MessageEvent pEvent) {
+		// TODO Auto-generated method stub
+		super.onMessageReceived(pEvent);
 	}
 }
