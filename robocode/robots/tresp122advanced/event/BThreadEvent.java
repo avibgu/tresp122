@@ -1,4 +1,4 @@
-package tresp122.event;
+package tresp122advanced.event;
 
 import robocode.Event;
 
