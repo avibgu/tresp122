@@ -1,0 +1,6 @@
+#Robocode robot team
+#Sun Jun 17 11:47:29 IDT 2012
+team.members=tresp122team.coordinator.AviBatelRobot*,tresp122team.coordinator.AviBatelRobot*
+team.author.name=Avi & Batel
+robocode.version=1.7.3.5
+team.description=...
