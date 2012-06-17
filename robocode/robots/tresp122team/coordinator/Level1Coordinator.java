@@ -59,6 +59,10 @@ public class Level1Coordinator extends LeveliCoordinator {
 			mBThreadsController.getAvoidCollisionsBThread().increasePriority(
 					(int) action.getValue());
 			break;
+
+		case SET_TARGET:
+			mBThreadsController.getFightBThread().setTarget(action.getMessage());
+			break;
 		}
 	}
 }

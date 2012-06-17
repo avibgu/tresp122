@@ -9,46 +9,49 @@ import tresp122team.utilities.NotifierThread;
 
 public class BThreadsController {
 
-	protected MoveBThread				mMoveBThread;
-	protected FightBThread				mFightBThread;
-	protected AvoidBulletsBThread		mAvoidBulletsBThread;
-	protected AvoidCollisionsBThread	mAvoidCollisionsBThread;
-	protected KeepEnergyBThread			mKeepEnergyBThread;
-	protected TrackBThread				mTrackBThread;
-	
-	protected KillBThread				mKillBThread;
-	protected StayAliveBThread			mStayAliveBThread;
-	
-	protected SuccessBThread			mSuccessBThread;
-	
-	protected Set<BThread>				mAllBThreads;
-	
+	protected MoveBThread mMoveBThread;
+	protected FightBThread mFightBThread;
+	protected AvoidBulletsBThread mAvoidBulletsBThread;
+	protected AvoidCollisionsBThread mAvoidCollisionsBThread;
+	protected KeepEnergyBThread mKeepEnergyBThread;
+	protected TrackBThread mTrackBThread;
+	protected CommunicationBThread mCommunicationBThread;
+
+	protected KillBThread mKillBThread;
+	protected StayAliveBThread mStayAliveBThread;
+
+	protected SuccessBThread mSuccessBThread;
+
+	protected Set<BThread> mAllBThreads;
+
 	public BThreadsController(AviBatelRobot pRobot) {
 
 		mAllBThreads = new HashSet<BThread>();
-		
+
 		mMoveBThread = new MoveBThread(pRobot);
 		mFightBThread = new FightBThread(pRobot);
 		mAvoidBulletsBThread = new AvoidBulletsBThread(pRobot);
 		mAvoidCollisionsBThread = new AvoidCollisionsBThread(pRobot);
 		mKeepEnergyBThread = new KeepEnergyBThread(pRobot);
 		mTrackBThread = new TrackBThread(pRobot);
-	
+		mCommunicationBThread = new CommunicationBThread(pRobot);
+
 		mAllBThreads.add(mMoveBThread);
 		mAllBThreads.add(mFightBThread);
 		mAllBThreads.add(mAvoidBulletsBThread);
 		mAllBThreads.add(mAvoidCollisionsBThread);
 		mAllBThreads.add(mKeepEnergyBThread);
 		mAllBThreads.add(mTrackBThread);
-		
+		mAllBThreads.add(mCommunicationBThread);
+
 		mKillBThread = new KillBThread(pRobot, getAllBThreads());
 		mStayAliveBThread = new StayAliveBThread(pRobot, getAllBThreads());
 
 		mAllBThreads.add(mKillBThread);
 		mAllBThreads.add(mStayAliveBThread);
-		
+
 		mSuccessBThread = new SuccessBThread(pRobot, getAllBThreads());
-		
+
 		mAllBThreads.add(mSuccessBThread);
 	}
 
@@ -56,11 +59,11 @@ public class BThreadsController {
 		for (BThread bThread : mAllBThreads)
 			new Thread(bThread).start();
 	}
-	
+
 	public void stopBThreads(Event event) {
 		new Thread(new NotifierThread(mAllBThreads, event)).start();
 	}
-	
+
 	public MoveBThread getMoveBThread() {
 		return mMoveBThread;
 	}
@@ -75,6 +78,15 @@ public class BThreadsController {
 
 	public void setFightBThread(FightBThread pFightBThread) {
 		mFightBThread = pFightBThread;
+	}
+
+	public CommunicationBThread getCommunicationBThread() {
+		return mCommunicationBThread;
+	}
+
+	public void setCommunicationBThread(
+			CommunicationBThread pCommunicationBThread) {
+		mCommunicationBThread = pCommunicationBThread;
 	}
 
 	public AvoidBulletsBThread getAvoidBulletsBThread() {
@@ -133,7 +145,7 @@ public class BThreadsController {
 	public void setSuccessBThread(SuccessBThread pSuccessBThread) {
 		mSuccessBThread = pSuccessBThread;
 	}
-	
+
 	public Set<BThread> getAllBThreads() {
 		return mAllBThreads;
 	}

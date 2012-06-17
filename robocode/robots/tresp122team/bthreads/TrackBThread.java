@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import robocode.BulletHitBulletEvent;
+import robocode.BulletHitEvent;
 import robocode.Event;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
@@ -18,8 +18,8 @@ public class TrackBThread extends BThread {
 	protected Queue<HitByBulletEvent>	mHitByBullet;
 	protected Queue<ScannedRobotEvent>	mScannedRobots;
 	protected Queue<HitRobotEvent>		mHitRobots;
-	protected Queue<BulletHitBulletEvent>	mBulletHitBullets;
-	
+	protected Queue<BulletHitEvent>		mBulletHits;
+
 	protected int mNumOfHitByBullet;
 	protected long mTime;
 
@@ -30,10 +30,10 @@ public class TrackBThread extends BThread {
 		mHitByBullet = new LinkedList<HitByBulletEvent>();
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
 		mHitRobots = new LinkedList<HitRobotEvent>();
-		mBulletHitBullets = new LinkedList<BulletHitBulletEvent>();
-		
+		mBulletHits = new LinkedList<BulletHitEvent>();
+
 		mPriority = 7;
-		
+
 		mNumOfHitByBullet = 0;
 		mTime = new Date().getTime();
 	}
@@ -48,24 +48,24 @@ public class TrackBThread extends BThread {
 				HitByBulletEvent event = mHitByBullet.poll();
 
 				mLock.unlock();
-				
+
 				mNumOfHitByBullet++;
-				
+
 				if (mNumOfHitByBullet > 2){
-					
+
 					long time = event.getTime() - mTime;
-					
+
 					if (mNumOfHitByBullet / (time/1000) > 1){
-						
+
 						super.notifyToMailingList(new BThreadEvent(
 								BThreadEventType.WE_ARE_UNDER_ATTACK));
-						
+
 						mTime = new Date().getTime();
 						mNumOfHitByBullet = 0;
 					}
 				}
 			}
-			
+
 			else
 				mLock.unlock();
 		}
@@ -82,7 +82,7 @@ public class TrackBThread extends BThread {
 					super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.ENEMY_IS_WEAK));
 			}
-			
+
 			else
 				mLock.unlock();
 		}
@@ -99,28 +99,36 @@ public class TrackBThread extends BThread {
 					super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.ENEMY_IS_WEAK));
 			}
-			
+
 			else
 				mLock.unlock();
 		}
 
 		if (mLock.tryLock()) {
 
-			if (!mBulletHitBullets.isEmpty()) {
+			if (!mBulletHits.isEmpty()) {
 
-				BulletHitBulletEvent event = mBulletHitBullets.poll();
+				BulletHitEvent event = mBulletHits.poll();
 
 				mLock.unlock();
-				
-				double bulletPower = event.getHitBullet().getPower();
-				
+
+				double bulletPower = event.getBullet().getPower();
+
 				double damage = 4 * bulletPower + 2 * Math.max(bulletPower - 1, 0);
-				
+
 				if (damage > 6)
 					super.notifyToMailingList(new BThreadEvent(
 						BThreadEventType.WE_MADE_DAMAGE_TO_ENEMY));
+
+				if (event.getEnergy() == 0)
+					super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.ENEMY_IS_DEAD));
+
+				else if (event.getEnergy() < 30)
+					super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.ENEMY_IS_WEAK));
 			}
-			
+
 			else
 				mLock.unlock();
 		}
@@ -158,12 +166,12 @@ public class TrackBThread extends BThread {
 			mLock.unlock();
 
 		}
-		
-		if (pEvent instanceof BulletHitBulletEvent) {
+
+		if (pEvent instanceof BulletHitEvent) {
 
 			mLock.lock();
 
-			mBulletHitBullets.add((BulletHitBulletEvent) pEvent);
+			mBulletHits.add((BulletHitEvent) pEvent);
 
 			mLock.unlock();
 

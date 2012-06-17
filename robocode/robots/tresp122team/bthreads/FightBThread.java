@@ -10,7 +10,6 @@ import tresp122team.action.BThreadActionType;
 import tresp122team.coordinator.AviBatelRobot;
 import tresp122team.utilities.AdvancedEnemyBot;
 
-
 /**
  * The strategy of this BThread has been taken from:
  * http://mark.random-article.com/weber/java/robocode/lesson4.html
@@ -22,6 +21,8 @@ public class FightBThread extends BThread {
 	protected double mFirePower;
 	protected double mDegree;
 
+	protected String mEnemyName;
+
 	public FightBThread(AviBatelRobot pRobot) {
 
 		super(pRobot);
@@ -32,6 +33,8 @@ public class FightBThread extends BThread {
 		mEnemy = new AdvancedEnemyBot();
 		mFirePower = 3.0;
 		mDegree = 0.0;
+
+		mEnemyName = "";
 	}
 
 	public void decideWhichActionToPerform() {
@@ -67,7 +70,7 @@ public class FightBThread extends BThread {
 
 	protected void calcDegreeAndFirePower(ScannedRobotEvent event) {
 
-//		mFirePower = Math.min(500 / event.getDistance(), 3);
+		// mFirePower = Math.min(500 / event.getDistance(), 3);
 
 		double bulletSpeed = 20 - mFirePower * 3;
 
@@ -76,7 +79,7 @@ public class FightBThread extends BThread {
 
 			mEnemy.update(event, mRobot);
 		}
-		
+
 		long time = (long) (mEnemy.getDistance() / bulletSpeed);
 
 		double futureX = mEnemy.getFutureX(time);
@@ -128,7 +131,28 @@ public class FightBThread extends BThread {
 
 			mLock.lock();
 
-			mScannedRobots = (ScannedRobotEvent) pEvent;
+			String enemyName = ((ScannedRobotEvent) pEvent).getName();
+
+			if (mEnemyName.isEmpty()) {
+
+				mScannedRobots = (ScannedRobotEvent) pEvent;
+
+				mLock.unlock();
+
+				if (mRobot.isLeader()) {
+
+					mCoordinator.addAction(new BThreadAction(
+							BThreadActionType.SEND_MESSAGE, mPriority + 100,
+							enemyName));
+
+					mEnemyName = enemyName;
+				}
+
+				return;
+			}
+
+			else if (mEnemyName.equals(enemyName))
+				mScannedRobots = (ScannedRobotEvent) pEvent;
 
 			mLock.unlock();
 		}
@@ -140,5 +164,14 @@ public class FightBThread extends BThread {
 
 	public void decreaseFirePower() {
 		mFirePower = 2;
+	}
+
+	public void setTarget(String pMessage) {
+
+		mLock.lock();
+
+		mEnemyName = pMessage;
+
+		mLock.unlock();
 	}
 }

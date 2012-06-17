@@ -15,16 +15,20 @@ public class KillBThread extends BThread {
 	private BThreadEvent mWeAreStrongEvent;
 	private BThreadEvent mEnemeyIsWeakEvent;
 	private BThreadEvent mWeMadeDamageToEnemyEvent;
+	private BThreadEvent mNewTargetEvent;
+	private BThreadEvent mEnemyIsDeadEvent;
 
 	public KillBThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
 
 		super(pRobot, pBThreadsToRegister);
 
 		mPriority = 20;
-		
+
 		mWeAreStrongEvent = null;
 		mEnemeyIsWeakEvent = null;
 		mWeMadeDamageToEnemyEvent = null;
+		mNewTargetEvent = null;
+		mEnemyIsDeadEvent = null;
 	}
 
 	@Override
@@ -91,6 +95,42 @@ public class KillBThread extends BThread {
 			else
 				mLock.unlock();
 		}
+
+		if (mLock.tryLock()) {
+
+			if (null != mNewTargetEvent) {
+
+				String enemyName = mNewTargetEvent.getMessage();
+
+				mNewTargetEvent = null;
+
+				mLock.unlock();
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.SET_TARGET, mPriority + 100,
+						enemyName));
+			}
+
+			else
+				mLock.unlock();
+		}
+
+		if (mLock.tryLock()) {
+
+			if (null != mEnemyIsDeadEvent) {
+
+				mEnemyIsDeadEvent = null;
+
+				mLock.unlock();
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.SET_TARGET, mPriority + 100,
+						""));
+			}
+
+			else
+				mLock.unlock();
+		}
 	}
 
 	@Override
@@ -123,6 +163,24 @@ public class KillBThread extends BThread {
 				mLock.lock();
 
 				mWeMadeDamageToEnemyEvent = event;
+
+				mLock.unlock();
+			}
+
+			else if (event.getType() == BThreadEventType.NEW_TARGET) {
+
+				mLock.lock();
+
+				mNewTargetEvent = event;
+
+				mLock.unlock();
+			}
+
+			else if (event.getType() == BThreadEventType.ENEMY_IS_DEAD) {
+
+				mLock.lock();
+
+				mEnemyIsDeadEvent = event;
 
 				mLock.unlock();
 			}
