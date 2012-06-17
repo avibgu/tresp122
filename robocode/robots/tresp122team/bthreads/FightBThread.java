@@ -137,6 +137,8 @@ public class FightBThread extends BThread {
 
 				mScannedRobots = (ScannedRobotEvent) pEvent;
 
+				mEnemyName = enemyName;
+
 				mLock.unlock();
 
 				if (mRobot.isLeader()) {
@@ -144,8 +146,6 @@ public class FightBThread extends BThread {
 					mCoordinator.addAction(new BThreadAction(
 							BThreadActionType.SEND_MESSAGE, mPriority + 100,
 							enemyName));
-
-					mEnemyName = enemyName;
 				}
 
 				return;

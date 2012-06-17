@@ -46,13 +46,8 @@ public class CommunicationBThread extends BThread {
 
 					String messageBody = event.getMessage().toString();
 
-					if (messageBody.equals("ENEMY_IS_DEAD"))
-						super.notifyToMailingList(new BThreadEvent(
-								BThreadEventType.ENEMY_IS_DEAD, ""));
-
-					else
-						super.notifyToMailingList(new BThreadEvent(
-								BThreadEventType.NEW_TARGET, messageBody));
+					super.notifyToMailingList(new BThreadEvent(
+							BThreadEventType.NEW_TARGET, messageBody));
 				}
 
 				else

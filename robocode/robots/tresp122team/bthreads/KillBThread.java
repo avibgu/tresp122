@@ -176,7 +176,7 @@ public class KillBThread extends BThread {
 				mLock.unlock();
 			}
 
-			else if (event.getType() == BThreadEventType.ENEMY_IS_DEAD) {
+			else if (event.getType() == BThreadEventType.ROBOT_DIED) {
 
 				mLock.lock();
 

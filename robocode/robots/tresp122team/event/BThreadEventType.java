@@ -13,7 +13,7 @@ public enum BThreadEventType {
 
 	// team addition
 	NEW_TARGET,
-	ENEMY_IS_DEAD,
+	ROBOT_DIED,
 
 	// These Events are sent from Level-1 BThreads to 'success'
 	WE_ARE_GOING_TO_WIN,

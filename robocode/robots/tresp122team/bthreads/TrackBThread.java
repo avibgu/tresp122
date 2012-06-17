@@ -8,9 +8,9 @@ import robocode.BulletHitEvent;
 import robocode.Event;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
+import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
-import tresp122team.action.BThreadAction;
-import tresp122team.action.BThreadActionType;
+
 import tresp122team.coordinator.AviBatelRobot;
 import tresp122team.event.BThreadEvent;
 import tresp122team.event.BThreadEventType;
@@ -21,9 +21,11 @@ public class TrackBThread extends BThread {
 	protected Queue<ScannedRobotEvent> mScannedRobots;
 	protected Queue<HitRobotEvent> mHitRobots;
 	protected Queue<BulletHitEvent> mBulletHits;
+	protected Queue<RobotDeathEvent> mRobotDeaths;
 
 	protected int mNumOfHitByBullet;
 	protected long mTime;
+
 
 	public TrackBThread(AviBatelRobot pRobot) {
 
@@ -33,6 +35,7 @@ public class TrackBThread extends BThread {
 		mScannedRobots = new LinkedList<ScannedRobotEvent>();
 		mHitRobots = new LinkedList<HitRobotEvent>();
 		mBulletHits = new LinkedList<BulletHitEvent>();
+		mRobotDeaths = new LinkedList<RobotDeathEvent>();
 
 		mPriority = 7;
 
@@ -123,19 +126,25 @@ public class TrackBThread extends BThread {
 					super.notifyToMailingList(new BThreadEvent(
 							BThreadEventType.WE_MADE_DAMAGE_TO_ENEMY));
 
-				if (event.getEnergy() == 0) {
-
-					super.notifyToMailingList(new BThreadEvent(
-							BThreadEventType.ENEMY_IS_DEAD));
-
-					mCoordinator.addAction(new BThreadAction(
-							BThreadActionType.SEND_MESSAGE, mPriority + 100,
-							"ENEMY_IS_DEAD"));
-				}
-
-				else if (event.getEnergy() < 30)
+				if (event.getEnergy() < 30)
 					super.notifyToMailingList(new BThreadEvent(
 							BThreadEventType.ENEMY_IS_WEAK));
+			}
+
+			else
+				mLock.unlock();
+		}
+
+		if (mLock.tryLock()) {
+
+			if (!mRobotDeaths.isEmpty()) {
+
+				RobotDeathEvent event = mRobotDeaths.poll();
+
+				mLock.unlock();
+
+				super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.ROBOT_DIED));
 			}
 
 			else
@@ -181,6 +190,16 @@ public class TrackBThread extends BThread {
 			mLock.lock();
 
 			mBulletHits.add((BulletHitEvent) pEvent);
+
+			mLock.unlock();
+
+		}
+
+		if (pEvent instanceof RobotDeathEvent) {
+
+			mLock.lock();
+
+			mRobotDeaths.add((RobotDeathEvent) pEvent);
 
 			mLock.unlock();
 

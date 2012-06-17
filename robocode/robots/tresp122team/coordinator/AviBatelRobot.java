@@ -37,10 +37,12 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	protected Set<BThread> 					mOnHitRobot;
 	protected Set<BThread>					mOnBulletHit;
 	protected Set<BThread>					mOnMessageReceived;
+	protected Set<BThread>					mRobotDeathEvent;
 
 	protected Set<Coordinator>				mCoordinators;
 
 	protected boolean						mIsLeader;
+
 
 	public AviBatelRobot() {
 
@@ -65,6 +67,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 		mOnHitRobot = new HashSet<BThread>();
 		mOnBulletHit = new HashSet<BThread>();
 		mOnMessageReceived = new HashSet<BThread>();
+		mRobotDeathEvent = new HashSet<BThread>();
 
 		mOnScannedRobot.add(mBThreadsController.getFightBThread());
 
@@ -77,6 +80,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 		mOnHitByBullet.add(mBThreadsController.getTrackBThread());
 		mOnScannedRobot.add(mBThreadsController.getTrackBThread());
 		mOnHitRobot.add(mBThreadsController.getTrackBThread());
+		mRobotDeathEvent.add(mBThreadsController.getTrackBThread());
 
 		mOnBulletHit.add(mBThreadsController.getTrackBThread());
 
@@ -300,5 +304,10 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	@Override
 	public void onMessageReceived(MessageEvent pEvent) {
 		new Thread(new NotifierThread(mOnMessageReceived, pEvent)).start();
+	}
+
+	@Override
+	public void onRobotDeath(RobotDeathEvent pEvent) {
+		new Thread(new NotifierThread(mRobotDeathEvent, pEvent)).start();
 	}
 }
