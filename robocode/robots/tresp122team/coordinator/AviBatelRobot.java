@@ -64,6 +64,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 		mOnHitWall = new HashSet<BThread>();
 		mOnHitRobot = new HashSet<BThread>();
 		mOnBulletHit = new HashSet<BThread>();
+		mOnMessageReceived = new HashSet<BThread>();
 
 		mOnScannedRobot.add(mBThreadsController.getFightBThread());
 
@@ -289,7 +290,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	}
 
 	public void checkIfLeader() {
-		mIsLeader = (getBotNumber(getName()) == 0);
+		mIsLeader = (getBotNumber(getName()) == 1);
 	}
 
 	public boolean isLeader() {
