@@ -133,7 +133,7 @@ public class FightBThread extends BThread {
 
 			String enemyName = ((ScannedRobotEvent) pEvent).getName();
 
-			if (mEnemyName.isEmpty()) {
+			if (mEnemyName.equals("")) {
 
 				mScannedRobots = (ScannedRobotEvent) pEvent;
 
