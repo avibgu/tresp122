@@ -1,16 +1,11 @@
 package tresp122team.bthreads;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import robocode.Event;
-import robocode.HitByBulletEvent;
 import robocode.MessageEvent;
-import robocode.ScannedRobotEvent;
 
-import tresp122team.action.BThreadAction;
-import tresp122team.action.BThreadActionType;
 import tresp122team.coordinator.AviBatelRobot;
 import tresp122team.event.BThreadEvent;
 import tresp122team.event.BThreadEventType;
@@ -49,9 +44,15 @@ public class CommunicationBThread extends BThread {
 
 					mLock.unlock();
 
-					super.notifyToMailingList(new BThreadEvent(
-							BThreadEventType.NEW_TARGET, event.getMessage()
-									.toString()));
+					String messageBody = event.getMessage().toString();
+
+					if (messageBody.equals("ENEMY_IS_DEAD"))
+						super.notifyToMailingList(new BThreadEvent(
+								BThreadEventType.ENEMY_IS_DEAD, ""));
+
+					else
+						super.notifyToMailingList(new BThreadEvent(
+								BThreadEventType.NEW_TARGET, messageBody));
 				}
 
 				else
@@ -62,9 +63,6 @@ public class CommunicationBThread extends BThread {
 
 	@Override
 	public void notifyAboutEvent(Event pEvent) {
-
-		if (mRobot.isLeader())
-			return;
 
 		if (pEvent instanceof MessageEvent) {
 

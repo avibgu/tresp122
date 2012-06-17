@@ -9,16 +9,18 @@ import robocode.Event;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
 import robocode.ScannedRobotEvent;
+import tresp122team.action.BThreadAction;
+import tresp122team.action.BThreadActionType;
 import tresp122team.coordinator.AviBatelRobot;
 import tresp122team.event.BThreadEvent;
 import tresp122team.event.BThreadEventType;
 
 public class TrackBThread extends BThread {
 
-	protected Queue<HitByBulletEvent>	mHitByBullet;
-	protected Queue<ScannedRobotEvent>	mScannedRobots;
-	protected Queue<HitRobotEvent>		mHitRobots;
-	protected Queue<BulletHitEvent>		mBulletHits;
+	protected Queue<HitByBulletEvent> mHitByBullet;
+	protected Queue<ScannedRobotEvent> mScannedRobots;
+	protected Queue<HitRobotEvent> mHitRobots;
+	protected Queue<BulletHitEvent> mBulletHits;
 
 	protected int mNumOfHitByBullet;
 	protected long mTime;
@@ -51,11 +53,11 @@ public class TrackBThread extends BThread {
 
 				mNumOfHitByBullet++;
 
-				if (mNumOfHitByBullet > 2){
+				if (mNumOfHitByBullet > 2) {
 
 					long time = event.getTime() - mTime;
 
-					if (mNumOfHitByBullet / (time/1000) > 1){
+					if (mNumOfHitByBullet / (time / 1000) > 1) {
 
 						super.notifyToMailingList(new BThreadEvent(
 								BThreadEventType.WE_ARE_UNDER_ATTACK));
@@ -80,7 +82,7 @@ public class TrackBThread extends BThread {
 
 				if (event.getEnergy() < 30)
 					super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.ENEMY_IS_WEAK));
+							BThreadEventType.ENEMY_IS_WEAK));
 			}
 
 			else
@@ -97,7 +99,7 @@ public class TrackBThread extends BThread {
 
 				if (event.getEnergy() < 30)
 					super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.ENEMY_IS_WEAK));
+							BThreadEventType.ENEMY_IS_WEAK));
 			}
 
 			else
@@ -114,19 +116,26 @@ public class TrackBThread extends BThread {
 
 				double bulletPower = event.getBullet().getPower();
 
-				double damage = 4 * bulletPower + 2 * Math.max(bulletPower - 1, 0);
+				double damage = 4 * bulletPower + 2
+						* Math.max(bulletPower - 1, 0);
 
 				if (damage > 6)
 					super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.WE_MADE_DAMAGE_TO_ENEMY));
+							BThreadEventType.WE_MADE_DAMAGE_TO_ENEMY));
 
-				if (event.getEnergy() == 0)
+				if (event.getEnergy() == 0) {
+
 					super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.ENEMY_IS_DEAD));
+							BThreadEventType.ENEMY_IS_DEAD));
+
+					mCoordinator.addAction(new BThreadAction(
+							BThreadActionType.SEND_MESSAGE, mPriority + 100,
+							"ENEMY_IS_DEAD"));
+				}
 
 				else if (event.getEnergy() < 30)
 					super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.ENEMY_IS_WEAK));
+							BThreadEventType.ENEMY_IS_WEAK));
 			}
 
 			else
