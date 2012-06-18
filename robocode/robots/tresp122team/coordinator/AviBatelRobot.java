@@ -170,11 +170,16 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 					break;
 
 				case SEND_MESSAGE:
-					try {
-						broadcastMessage(action.getMessage());
-					} catch (IOException e) {
-						e.printStackTrace();
+					
+					boolean succeeded = false;
+					
+					while (!succeeded){
+						try {
+							broadcastMessage(action.getMessage());
+							succeeded = true;
+						} catch (IOException e) {}
 					}
+					
 					break;
 			}
 
