@@ -303,11 +303,18 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 
 	@Override
 	public void onMessageReceived(MessageEvent pEvent) {
+		
+		if(pEvent.getSender().equals(getName()))
+			return;
+		
 		new Thread(new NotifierThread(mOnMessageReceived, pEvent)).start();
 	}
 
 	@Override
 	public void onRobotDeath(RobotDeathEvent pEvent) {
-		new Thread(new NotifierThread(mRobotDeathEvent, pEvent)).start();
+		
+		// Enemy		
+		if (!isTeammate(((RobotDeathEvent) pEvent).getName()))
+			new Thread(new NotifierThread(mRobotDeathEvent, pEvent)).start();
 	}
 }
