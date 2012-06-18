@@ -25,7 +25,7 @@ public abstract class BThread implements Runnable {
 	}
 	
 	public BThread(AviBatelRobot pRobot, Set<BThread> pBThreadsToRegister) {
-		this(pRobot, null, new HashSet<BThread>());
+		this(pRobot, pRobot, pBThreadsToRegister);
 	}
 
 	public BThread(AviBatelRobot pRobot, Coordinator pCoordinator,
