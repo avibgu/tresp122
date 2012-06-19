@@ -101,7 +101,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	public void run() {
 
 		setColors(Color.DARK_GRAY, Color.BLACK, Color.ORANGE); // body,gun,radar
-		setBulletColor(Color.getHSBColor(17, 17, 71));
+		setBulletColor(Color.getHSBColor(71, 71, 17));
 
 		setAdjustRadarForRobotTurn(true);
 		setAdjustGunForRobotTurn(true);

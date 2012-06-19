@@ -36,6 +36,42 @@ public class KillBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
+			if (null != mNewTargetEvent) {
+
+				String enemyName = mNewTargetEvent.getMessage();
+
+				mNewTargetEvent = null;
+
+				mLock.unlock();
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.SET_TARGET, mPriority + 100,
+						enemyName));
+			}
+
+			else
+				mLock.unlock();
+		}
+
+		if (mLock.tryLock()) {
+
+			if (null != mEnemyIsDeadEvent) {
+
+				mEnemyIsDeadEvent = null;
+
+				mLock.unlock();
+
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.SET_TARGET, mPriority + 100,
+						""));
+			}
+
+			else
+				mLock.unlock();
+		}
+		
+		if (mLock.tryLock()) {
+
 			if (null != mWeAreStrongEvent) {
 
 				mWeAreStrongEvent = null;
@@ -90,42 +126,6 @@ public class KillBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.INCREASE_FIGHT_PRIORITY, mPriority,
 						10));
-			}
-
-			else
-				mLock.unlock();
-		}
-
-		if (mLock.tryLock()) {
-
-			if (null != mNewTargetEvent) {
-
-				String enemyName = mNewTargetEvent.getMessage();
-
-				mNewTargetEvent = null;
-
-				mLock.unlock();
-
-				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.SET_TARGET, mPriority + 100,
-						enemyName));
-			}
-
-			else
-				mLock.unlock();
-		}
-
-		if (mLock.tryLock()) {
-
-			if (null != mEnemyIsDeadEvent) {
-
-				mEnemyIsDeadEvent = null;
-
-				mLock.unlock();
-
-				mCoordinator.addAction(new BThreadAction(
-						BThreadActionType.SET_TARGET, mPriority + 100,
-						""));
 			}
 
 			else

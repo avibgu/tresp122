@@ -48,6 +48,22 @@ public class TrackBThread extends BThread {
 
 		if (mLock.tryLock()) {
 
+			if (!mRobotDeaths.isEmpty()) {
+
+				RobotDeathEvent event = mRobotDeaths.poll();
+
+				mLock.unlock();
+
+				super.notifyToMailingList(new BThreadEvent(
+						BThreadEventType.ROBOT_DIED));
+			}
+
+			else
+				mLock.unlock();
+		}
+		
+		if (mLock.tryLock()) {
+
 			if (!mHitByBullet.isEmpty()) {
 
 				HitByBulletEvent event = mHitByBullet.poll();
@@ -134,28 +150,22 @@ public class TrackBThread extends BThread {
 			else
 				mLock.unlock();
 		}
-
-		if (mLock.tryLock()) {
-
-			if (!mRobotDeaths.isEmpty()) {
-
-				RobotDeathEvent event = mRobotDeaths.poll();
-
-				mLock.unlock();
-
-				super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.ROBOT_DIED));
-			}
-
-			else
-				mLock.unlock();
-		}
 	}
 
 	@Override
 	public void notifyAboutEvent(Event pEvent) {
 
-		if (pEvent instanceof HitByBulletEvent) {
+		if (pEvent instanceof RobotDeathEvent) {
+
+			mLock.lock();
+
+			mRobotDeaths.add((RobotDeathEvent) pEvent);
+
+			mLock.unlock();
+
+		}
+		
+		else if (pEvent instanceof HitByBulletEvent) {
 
 			mLock.lock();
 
@@ -185,21 +195,11 @@ public class TrackBThread extends BThread {
 
 		}
 
-		if (pEvent instanceof BulletHitEvent) {
+		else if (pEvent instanceof BulletHitEvent) {
 
 			mLock.lock();
 
 			mBulletHits.add((BulletHitEvent) pEvent);
-
-			mLock.unlock();
-
-		}
-
-		if (pEvent instanceof RobotDeathEvent) {
-
-			mLock.lock();
-
-			mRobotDeaths.add((RobotDeathEvent) pEvent);
 
 			mLock.unlock();
 
