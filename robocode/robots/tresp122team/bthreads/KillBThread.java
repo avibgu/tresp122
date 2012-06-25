@@ -57,6 +57,8 @@ public class KillBThread extends BThread {
 
 			if (null != mEnemyIsDeadEvent) {
 
+				String robotName = mEnemyIsDeadEvent.getMessage();
+				
 				mEnemyIsDeadEvent = null;
 
 				mLock.unlock();
@@ -64,6 +66,10 @@ public class KillBThread extends BThread {
 				mCoordinator.addAction(new BThreadAction(
 						BThreadActionType.SET_TARGET, mPriority + 100,
 						""));
+				
+				mCoordinator.addAction(new BThreadAction(
+						BThreadActionType.ANOTHER_ROBOT_DIED, mPriority + 100,
+						robotName));
 			}
 
 			else

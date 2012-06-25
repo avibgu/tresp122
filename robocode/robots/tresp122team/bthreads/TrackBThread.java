@@ -55,7 +55,7 @@ public class TrackBThread extends BThread {
 				mLock.unlock();
 
 				super.notifyToMailingList(new BThreadEvent(
-						BThreadEventType.ROBOT_DIED));
+						BThreadEventType.ROBOT_DIED, event.getName()));
 			}
 
 			else

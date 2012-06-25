@@ -2,6 +2,10 @@ package tresp122team.bthreads;
 
 import java.awt.geom.Point2D;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
+
 import robocode.Event;
 import robocode.ScannedRobotEvent;
 
@@ -16,18 +20,19 @@ import tresp122team.utilities.AdvancedEnemyBot;
  */
 public class FightBThread extends BThread {
 
-	protected ScannedRobotEvent mScannedRobots;
+	protected Stack<ScannedRobotEvent> mScannedRobots;
 	protected AdvancedEnemyBot mEnemy;
 	protected double mFirePower;
 	protected double mDegree;
 
 	protected String mEnemyName;
+	protected Set<String> deadRobotsSet;
 
 	public FightBThread(AviBatelRobot pRobot) {
 
 		super(pRobot);
 
-		mScannedRobots = null;
+		mScannedRobots = new Stack<ScannedRobotEvent>();
 		mPriority = 10;
 
 		mEnemy = new AdvancedEnemyBot();
@@ -35,20 +40,24 @@ public class FightBThread extends BThread {
 		mDegree = 0.0;
 
 		mEnemyName = "";
+		deadRobotsSet = new HashSet<String>();
 	}
 
 	public void decideWhichActionToPerform() {
 
 		if (mLock.tryLock()) {
 
-			if (null != mScannedRobots) {
+			if (!mScannedRobots.isEmpty()) {
 
-				ScannedRobotEvent event = mScannedRobots;
+				ScannedRobotEvent event = mScannedRobots.pop();
 
-				mScannedRobots = null;
+				mScannedRobots.clear();
 
 				mLock.unlock();
 
+				if (deadRobotsSet.contains(event.getName()))
+					return;
+				
 				calcDegreeAndFirePower(event);
 
 				mCoordinator.addAction(new BThreadAction(
@@ -135,7 +144,7 @@ public class FightBThread extends BThread {
 
 			if (mEnemyName.equals("")) {
 
-				mScannedRobots = (ScannedRobotEvent) pEvent;
+				mScannedRobots.push((ScannedRobotEvent) pEvent);
 
 				mEnemyName = enemyName;
 
@@ -152,7 +161,7 @@ public class FightBThread extends BThread {
 			}
 
 			else if (mEnemyName.equals(enemyName))
-				mScannedRobots = (ScannedRobotEvent) pEvent;
+				mScannedRobots.push((ScannedRobotEvent) pEvent);
 
 			mLock.unlock();
 		}
@@ -168,10 +177,19 @@ public class FightBThread extends BThread {
 
 	public void setTarget(String pMessage) {
 
-		mLock.lock();
+//		mLock.lock();
 
 		mEnemyName = pMessage;
 
-		mLock.unlock();
+//		mLock.unlock();
+	}
+	
+	public void addDeadRobot(String pMessage) {
+		
+//		mLock.lock();
+
+		deadRobotsSet.add(pMessage);
+		
+//		mLock.unlock();
 	}
 }

@@ -63,6 +63,10 @@ public class Level1Coordinator extends LeveliCoordinator {
 		case SET_TARGET:
 			mBThreadsController.getFightBThread().setTarget(action.getMessage());
 			break;
+			
+		case ANOTHER_ROBOT_DIED:
+			mBThreadsController.getFightBThread().addDeadRobot(action.getMessage());
+			break;
 		}
 	}
 }
