@@ -101,7 +101,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	public void run() {
 
 		setColors(Color.DARK_GRAY, Color.BLACK, Color.ORANGE); // body,gun,radar
-		setBulletColor(Color.getHSBColor(71, 71, 17));
+		setBulletColor(Color.MAGENTA);
 
 		setAdjustRadarForRobotTurn(true);
 		setAdjustGunForRobotTurn(true);
@@ -209,11 +209,18 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	public void onScannedRobot(ScannedRobotEvent event) {
 
 		// Teammate
-		if (isTeammate(event.getName()))
-			return;
+		if (isTeammate(event.getName())){
+			
+			Set<BThread> bThreads = new HashSet<BThread>();
+			
+			bThreads.add(mBThreadsController.getAvoidBulletsBThread());
+			
+			new Thread(new NotifierThread(bThreads, event)).start();
 
+		}
 		// Enemy
-		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
+		else
+			new Thread(new NotifierThread(mOnScannedRobot, event)).start();
 	}
 
 	@Override
