@@ -7,12 +7,14 @@ import java.util.Set;
 import java.util.Stack;
 
 import robocode.Event;
+import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
 
 import tresp122team.action.BThreadAction;
 import tresp122team.action.BThreadActionType;
 import tresp122team.coordinator.AviBatelRobot;
 import tresp122team.utilities.AdvancedEnemyBot;
+import tresp122team.utilities.StoppableNotifierThread;
 
 /**
  * The strategy of this BThread has been taken from:
@@ -28,6 +30,8 @@ public class FightBThread extends BThread {
 	protected String mEnemyName;
 	protected Set<String> deadRobotsSet;
 
+	private Set<StoppableNotifierThread> mBThreadsWhichNeedToBeKilled;
+
 	public FightBThread(AviBatelRobot pRobot) {
 
 		super(pRobot);
@@ -41,6 +45,8 @@ public class FightBThread extends BThread {
 
 		mEnemyName = "";
 		deadRobotsSet = new HashSet<String>();
+
+		mBThreadsWhichNeedToBeKilled = new HashSet<StoppableNotifierThread>();
 	}
 
 	public void decideWhichActionToPerform() {
@@ -57,7 +63,7 @@ public class FightBThread extends BThread {
 
 				if (deadRobotsSet.contains(event.getName()))
 					return;
-				
+
 				calcDegreeAndFirePower(event);
 
 				mCoordinator.addAction(new BThreadAction(
@@ -135,10 +141,48 @@ public class FightBThread extends BThread {
 
 	@Override
 	public void notifyAboutEvent(Event pEvent) {
+		
+		if (pEvent instanceof RobotDeathEvent){
+			
+			setTarget("");
+			addDeadRobot(((RobotDeathEvent) pEvent).getName());
+		}
+	}
 
-		if (pEvent instanceof ScannedRobotEvent) {
+	public void increaseFirePower() {
+		mFirePower = 3;
+	}
 
-			mLock.lock();
+	public void decreaseFirePower() {
+		mFirePower = 2;
+	}
+
+	public void setTarget(String pMessage) {
+
+		mLock.lock();
+
+		mEnemyName = pMessage;
+
+		mLock.unlock();
+	}
+
+	public void addDeadRobot(String pMessage) {
+
+		mLock.lock();
+
+		deadRobotsSet.add(pMessage);
+
+		mLock.unlock();
+
+		synchronized (mBThreadsWhichNeedToBeKilled) {
+			for (StoppableNotifierThread pStoppableNotifierThread : mBThreadsWhichNeedToBeKilled)
+				pStoppableNotifierThread.stop();
+		}
+	}
+
+	public boolean notifyAboutScannedRobot(ScannedRobotEvent pEvent) {
+
+		if (mLock.tryLock()) {
 
 			String enemyName = ((ScannedRobotEvent) pEvent).getName();
 
@@ -157,39 +201,31 @@ public class FightBThread extends BThread {
 							enemyName));
 				}
 
-				return;
+				return true;
 			}
 
 			else if (mEnemyName.equals(enemyName))
 				mScannedRobots.push((ScannedRobotEvent) pEvent);
 
 			mLock.unlock();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public void addToBThreadsWhichNeedToBeKilled(
+			StoppableNotifierThread pStoppableNotifierThread) {
+		synchronized (mBThreadsWhichNeedToBeKilled) {
+			mBThreadsWhichNeedToBeKilled.add(pStoppableNotifierThread);
 		}
 	}
 
-	public void increaseFirePower() {
-		mFirePower = 3;
-	}
-
-	public void decreaseFirePower() {
-		mFirePower = 2;
-	}
-
-	public void setTarget(String pMessage) {
-
-//		mLock.lock();
-
-		mEnemyName = pMessage;
-
-//		mLock.unlock();
-	}
-	
-	public void addDeadRobot(String pMessage) {
-		
-//		mLock.lock();
-
-		deadRobotsSet.add(pMessage);
-		
-//		mLock.unlock();
+	public void removeFromBThreadsWhichNeedToBeKilled(
+			StoppableNotifierThread pStoppableNotifierThread) {
+		synchronized (mBThreadsWhichNeedToBeKilled) {
+			mBThreadsWhichNeedToBeKilled.remove(pStoppableNotifierThread);
+		}
 	}
 }
