@@ -172,6 +172,8 @@ public class FightBThread extends BThread {
 
 		deadRobotsSet.add(pMessage);
 
+		mEnemy.reset();
+		
 		mLock.unlock();
 
 		synchronized (mBThreadsWhichNeedToBeKilled) {
