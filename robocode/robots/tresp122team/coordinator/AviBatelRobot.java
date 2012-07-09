@@ -322,14 +322,15 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	public void onRobotDeath(RobotDeathEvent pEvent) {
 		
 		// Enemy		
-//		if (!isTeammate(((RobotDeathEvent) pEvent).getName()))
+		if (!isTeammate(((RobotDeathEvent) pEvent).getName())){
+			
 //			new Thread(new NotifierThread(mRobotDeathEvent, pEvent)).start();
-		
-		
-		Set<BThread> bThreads = new HashSet<BThread>();
-		
-		bThreads.add(mBThreadsController.getFightBThread());
-		
-		new Thread(new NotifierThread(bThreads, pEvent)).start();
+
+			Set<BThread> bThreads = new HashSet<BThread>();
+			
+			bThreads.add(mBThreadsController.getFightBThread());
+			
+			new Thread(new NotifierThread(bThreads, pEvent)).start();
+		}
 	}
 }
