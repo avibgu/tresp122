@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import robocode.Event;
-import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
 
 import tresp122team.action.BThreadAction;
@@ -165,12 +164,6 @@ public class FightBThread extends BThread {
 				mScannedRobots.push((ScannedRobotEvent) pEvent);
 
 			mLock.unlock();
-		}
-			
-		else if (pEvent instanceof RobotDeathEvent){
-			
-			setTarget("");
-			addDeadRobot(((RobotDeathEvent) pEvent).getName());
 		}
 	}
 
