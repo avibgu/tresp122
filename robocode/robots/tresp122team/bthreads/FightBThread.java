@@ -14,7 +14,6 @@ import tresp122team.action.BThreadAction;
 import tresp122team.action.BThreadActionType;
 import tresp122team.coordinator.AviBatelRobot;
 import tresp122team.utilities.AdvancedEnemyBot;
-import tresp122team.utilities.StoppableNotifierThread;
 
 /**
  * The strategy of this BThread has been taken from:
@@ -30,8 +29,6 @@ public class FightBThread extends BThread {
 	protected String mEnemyName;
 	protected Set<String> deadRobotsSet;
 
-	private Set<StoppableNotifierThread> mBThreadsWhichNeedToBeKilled;
-
 	public FightBThread(AviBatelRobot pRobot) {
 
 		super(pRobot);
@@ -45,8 +42,6 @@ public class FightBThread extends BThread {
 
 		mEnemyName = "";
 		deadRobotsSet = new HashSet<String>();
-
-		mBThreadsWhichNeedToBeKilled = new HashSet<StoppableNotifierThread>();
 	}
 
 	public void decideWhichActionToPerform() {
@@ -142,7 +137,37 @@ public class FightBThread extends BThread {
 	@Override
 	public void notifyAboutEvent(Event pEvent) {
 		
-		if (pEvent instanceof RobotDeathEvent){
+		if (pEvent instanceof ScannedRobotEvent){
+
+			mLock.lock();
+
+			String enemyName = ((ScannedRobotEvent) pEvent).getName();
+
+			if (mEnemyName.equals("")) {
+
+				mScannedRobots.push((ScannedRobotEvent) pEvent);
+
+				mEnemyName = enemyName;
+
+				mLock.unlock();
+
+				if (mRobot.isLeader()) {
+
+					mCoordinator.addAction(new BThreadAction(
+							BThreadActionType.SEND_MESSAGE, mPriority + 100,
+							enemyName));
+				}
+
+				return;
+			}
+
+			else if (mEnemyName.equals(enemyName))
+				mScannedRobots.push((ScannedRobotEvent) pEvent);
+
+			mLock.unlock();
+		}
+			
+		else if (pEvent instanceof RobotDeathEvent){
 			
 			setTarget("");
 			addDeadRobot(((RobotDeathEvent) pEvent).getName());
@@ -162,6 +187,8 @@ public class FightBThread extends BThread {
 		mLock.lock();
 
 		mEnemyName = pMessage;
+		
+		mEnemy.reset();
 
 		mLock.unlock();
 	}
@@ -175,59 +202,5 @@ public class FightBThread extends BThread {
 		mEnemy.reset();
 		
 		mLock.unlock();
-
-		synchronized (mBThreadsWhichNeedToBeKilled) {
-			for (StoppableNotifierThread pStoppableNotifierThread : mBThreadsWhichNeedToBeKilled)
-				pStoppableNotifierThread.stop();
-		}
-	}
-
-	public boolean notifyAboutScannedRobot(ScannedRobotEvent pEvent) {
-
-		if (mLock.tryLock()) {
-
-			String enemyName = ((ScannedRobotEvent) pEvent).getName();
-
-			if (mEnemyName.equals("")) {
-
-				mScannedRobots.push((ScannedRobotEvent) pEvent);
-
-				mEnemyName = enemyName;
-
-				mLock.unlock();
-
-				if (mRobot.isLeader()) {
-
-					mCoordinator.addAction(new BThreadAction(
-							BThreadActionType.SEND_MESSAGE, mPriority + 100,
-							enemyName));
-				}
-
-				return true;
-			}
-
-			else if (mEnemyName.equals(enemyName))
-				mScannedRobots.push((ScannedRobotEvent) pEvent);
-
-			mLock.unlock();
-
-			return true;
-		}
-
-		return false;
-	}
-
-	public void addToBThreadsWhichNeedToBeKilled(
-			StoppableNotifierThread pStoppableNotifierThread) {
-		synchronized (mBThreadsWhichNeedToBeKilled) {
-			mBThreadsWhichNeedToBeKilled.add(pStoppableNotifierThread);
-		}
-	}
-
-	public void removeFromBThreadsWhichNeedToBeKilled(
-			StoppableNotifierThread pStoppableNotifierThread) {
-		synchronized (mBThreadsWhichNeedToBeKilled) {
-			mBThreadsWhichNeedToBeKilled.remove(pStoppableNotifierThread);
-		}
 	}
 }

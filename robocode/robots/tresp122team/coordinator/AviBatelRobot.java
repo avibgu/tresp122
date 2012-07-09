@@ -7,7 +7,6 @@ import tresp122team.action.BThreadActionType;
 import tresp122team.bthreads.BThread;
 import tresp122team.bthreads.BThreadsController;
 import tresp122team.utilities.NotifierThread;
-import tresp122team.utilities.StoppableNotifierThread;
 import tresp122team.utilities.StopperThread;
 
 import java.awt.Color;
@@ -215,8 +214,6 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 
 		// Enemy
 		new Thread(new NotifierThread(mOnScannedRobot, event)).start();
-		
-		new Thread(new StoppableNotifierThread(mBThreadsController.getFightBThread(), event)).start();
 	}
 
 	@Override
@@ -322,15 +319,7 @@ public class AviBatelRobot extends TeamRobot implements Coordinator{
 	public void onRobotDeath(RobotDeathEvent pEvent) {
 		
 		// Enemy		
-		if (!isTeammate(((RobotDeathEvent) pEvent).getName())){
-			
-//			new Thread(new NotifierThread(mRobotDeathEvent, pEvent)).start();
-
-			Set<BThread> bThreads = new HashSet<BThread>();
-			
-			bThreads.add(mBThreadsController.getFightBThread());
-			
-			new Thread(new NotifierThread(bThreads, pEvent)).start();
-		}
+		if (!isTeammate(((RobotDeathEvent) pEvent).getName()))
+			new Thread(new NotifierThread(mRobotDeathEvent, pEvent)).start();
 	}
 }
